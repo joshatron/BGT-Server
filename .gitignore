@@ -5,3 +5,5 @@ target/
 dependency-reduced-pom.xml
 *.iml
 *.swp
+server.db
+keystore.p12

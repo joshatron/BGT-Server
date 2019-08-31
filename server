@@ -11,4 +11,4 @@ if [ "$1" = "-r" ]; then
     rm server.db
 fi
 
-java -jar tak-server.jar
+java -jar bgt-server.jar

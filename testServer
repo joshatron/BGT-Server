@@ -8,4 +8,4 @@ cd game-server/
 
 rm -f server.db
 
-java -jar tak-server.jar --spring.profiles.active="test"
+java -jar bgt-server.jar --spring.profiles.active="test"
