@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+command -v java >/dev/null 2>&1 || { echo >&2 "Java 8 is required for running. Aborting."; exit 1; }
+
+cd game-server/
+
+rm -f server.db
+
+java -jar tak-server.jar --spring.profiles.active="test"

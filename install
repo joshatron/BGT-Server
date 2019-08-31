@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven is required for setup. Aborting."; exit 1; }
+
+mvn clean install
+
+mkdir -p game-server/
+cp target/tak-server*.jar game-server/tak-server.jar
+
+cd game-server
+if [ ! -f keystore.p12 ]; then
+    keytool -genkey -noprompt \
+     -alias takserver \
+     -storetype PKCS12 \
+     -keyalg RSA \
+     -keysize 2048 \
+     -keystore keystore.p12 \
+     -validity 3650 \
+     -dname "CN=Tak Server, OU=Tak, O=Leger Faire, L=San Diego, S=CA, C=US" \
+     -storepass takserver \
+     -keypass takserver
+fi

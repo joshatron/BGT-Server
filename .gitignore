@@ -1,0 +1,7 @@
+.idea/
+target/
+/game-server/
+*.json
+dependency-reduced-pom.xml
+*.iml
+*.swp
