@@ -22,11 +22,11 @@ public class GameController {
     private GameUtils gameUtils;
     private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
-    @PostMapping(value = "/request/create/{id}", produces = "application/json")
-    public ResponseEntity requestGame(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String other, @RequestBody GameRequest gameRequest) {
+    @PostMapping(value = "/request/create", produces = "application/json")
+    public ResponseEntity requestGame(@RequestHeader(value="Authorization") String auth, @RequestBody GameRequest gameRequest) {
         try {
             logger.info("Requesting new game");
-            gameUtils.requestGame(new Auth(auth), other, gameRequest);
+            gameUtils.requestGame(new Auth(auth), "", gameRequest);
             logger.info("Request successfully made");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

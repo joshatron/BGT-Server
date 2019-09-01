@@ -9,4 +9,5 @@ public class GameRequest {
     private int size;
     private String requesterColor;
     private String first;
+    private String[] opponents;
 }

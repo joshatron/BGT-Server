@@ -28,7 +28,7 @@ A summary of the methods are described below:
 | /social/message/send/{id}                 | POST      | Send a message to a user                                                  |
 | /social/message/search                    | GET       | Search through your messages                                              |
 | /social/notifications                     | GET       | Get the number of incoming friend requests and unread messages            |
-| /games/request/create/{id}                | POST      | Create a request for a game                                               |
+| /games/request/create                     | POST      | Create a request for a game                                               |
 | /games/request/cancel/{id}                | DELETE    | Delete a game request                                                     |
 | /games/request/respond/{id}               | POST      | Accept or deny a game request                                             |
 | /games/request/incoming                   | GET       | Get all your incoming game requests                                       |
