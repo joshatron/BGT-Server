@@ -4,7 +4,7 @@ import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.request.Text;
 import io.joshatron.bgt.server.response.Message;
 import io.joshatron.bgt.server.response.SocialNotifications;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 import io.joshatron.bgt.server.utils.SocialUtils;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
@@ -63,7 +63,7 @@ public class SocialController {
     public ResponseEntity checkIncomingRequests(@RequestHeader(value="Authorization") String auth) {
         try {
             logger.info("Requesting incoming friend requests");
-            User[] incoming = socialUtils.listIncomingFriendRequests(new Auth(auth));
+            UserInfo[] incoming = socialUtils.listIncomingFriendRequests(new Auth(auth));
             logger.info("Returning requests");
             return new ResponseEntity<>(incoming, HttpStatus.OK);
         } catch (Exception e) {
@@ -75,7 +75,7 @@ public class SocialController {
     public ResponseEntity checkOutgoingRequests(@RequestHeader(value="Authorization") String auth) {
         try {
             logger.info("Requesting outgoing friend requests");
-            User[] outgoing = socialUtils.listOutgoingFriendRequests(new Auth(auth));
+            UserInfo[] outgoing = socialUtils.listOutgoingFriendRequests(new Auth(auth));
             logger.info("Returning requests");
             return new ResponseEntity<>(outgoing, HttpStatus.OK);
         } catch (Exception e) {
@@ -141,7 +141,7 @@ public class SocialController {
     public ResponseEntity listFriends(@RequestHeader(value="Authorization") String auth) {
         try {
             logger.info("Getting list of friends");
-            User[] friends = socialUtils.listFriends(new Auth(auth));
+            UserInfo[] friends = socialUtils.listFriends(new Auth(auth));
             logger.info("Returning friend list");
             return new ResponseEntity<>(friends, HttpStatus.OK);
         } catch (Exception e) {
@@ -153,7 +153,7 @@ public class SocialController {
     public ResponseEntity listBlocked(@RequestHeader(value="Authorization") String auth) {
         try {
             logger.info("Getting list blocking users");
-            User[] blocked = socialUtils.listBlocked(new Auth(auth));
+            UserInfo[] blocked = socialUtils.listBlocked(new Auth(auth));
             logger.info("Returning blocking list");
             return new ResponseEntity<>(blocked, HttpStatus.OK);
         } catch (Exception e) {

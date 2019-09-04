@@ -7,7 +7,7 @@ import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.response.Message;
 import io.joshatron.bgt.server.response.SocialNotifications;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -58,7 +58,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -77,7 +77,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -91,22 +91,22 @@ public class SocialUtils {
         socialDAO.deleteFriendRequest(other, user.getUserId());
     }
 
-    public User[] listIncomingFriendRequests(Auth auth) throws GameServerException {
+    public UserInfo[] listIncomingFriendRequests(Auth auth) throws GameServerException {
         Validator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
 
         return socialDAO.getIncomingFriendRequests(user.getUserId());
     }
 
-    public User[] listOutgoingFriendRequests(Auth auth) throws GameServerException {
+    public UserInfo[] listOutgoingFriendRequests(Auth auth) throws GameServerException {
         Validator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
 
         return socialDAO.getOutgoingFriendRequests(user.getUserId());
     }
@@ -117,7 +117,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -134,7 +134,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -163,7 +163,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -180,7 +180,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -188,22 +188,22 @@ public class SocialUtils {
         return socialDAO.isBlocked(user.getUserId(), other);
     }
 
-    public User[] listFriends(Auth auth) throws GameServerException {
+    public UserInfo[] listFriends(Auth auth) throws GameServerException {
         Validator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
 
         return socialDAO.getFriends(user.getUserId());
     }
 
-    public User[] listBlocked(Auth auth) throws GameServerException {
+    public UserInfo[] listBlocked(Auth auth) throws GameServerException {
         Validator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
 
         return socialDAO.getBlocking(user.getUserId());
     }
@@ -215,7 +215,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -245,7 +245,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         Read rd = Validator.validateRead(read);
         String[] users = null;
         if(senders != null && senders.length() > 0) {
@@ -275,7 +275,7 @@ public class SocialUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
 
         return socialDAO.getSocialNotifications(user.getUserId());
     }

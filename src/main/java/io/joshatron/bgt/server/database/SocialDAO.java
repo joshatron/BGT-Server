@@ -6,7 +6,7 @@ import io.joshatron.bgt.server.request.Read;
 import io.joshatron.bgt.server.request.RecipientType;
 import io.joshatron.bgt.server.response.Message;
 import io.joshatron.bgt.server.response.SocialNotifications;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 
 import java.util.Date;
 
@@ -23,10 +23,10 @@ public interface SocialDAO {
     void unblock(String requester, String other) throws GameServerException;
     void sendMessage(String requester, String other, String text, RecipientType recipientType) throws GameServerException;
     void markMessageRead(String id) throws GameServerException;
-    User[] getIncomingFriendRequests(String user) throws GameServerException;
-    User[] getOutgoingFriendRequests(String user) throws GameServerException;
-    User[] getFriends(String user) throws GameServerException;
-    User[] getBlocking(String user) throws GameServerException;
+    UserInfo[] getIncomingFriendRequests(String user) throws GameServerException;
+    UserInfo[] getOutgoingFriendRequests(String user) throws GameServerException;
+    UserInfo[] getFriends(String user) throws GameServerException;
+    UserInfo[] getBlocking(String user) throws GameServerException;
     Message[] listMessages(String userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException;
     SocialNotifications getSocialNotifications(String userId) throws GameServerException;
 }

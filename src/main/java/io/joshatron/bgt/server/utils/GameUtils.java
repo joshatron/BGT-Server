@@ -46,7 +46,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!ai && !accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -84,7 +84,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(other)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -103,7 +103,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!accountDAO.userExists(id)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
@@ -123,7 +123,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
 
         return gameDAO.getIncomingGameRequests(user.getUserId());
     }
@@ -133,7 +133,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
 
         return gameDAO.getOutgoingGameRequests(user.getUserId());
     }
@@ -144,7 +144,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(gameDAO.randomGameRequestExists(user.getUserId())) {
             throw new GameServerException(ErrorCode.GAME_REQUEST_EXISTS);
         }
@@ -179,7 +179,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!gameDAO.randomGameRequestExists(user.getUserId())) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
@@ -192,7 +192,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         if(!gameDAO.randomGameRequestExists(user.getUserId())) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
@@ -206,7 +206,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         checkForForfeits(user.getUserId());
         if(!gameDAO.gameExists(gameId)) {
             throw new GameServerException(ErrorCode.GAME_NOT_FOUND);
@@ -248,7 +248,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         checkForForfeits(user.getUserId());
         Date now = new Date();
         Date start = null;
@@ -305,7 +305,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         checkForForfeits(user.getUserId());
         if(!gameDAO.gameExists(gameId)) {
             throw new GameServerException(ErrorCode.GAME_NOT_FOUND);
@@ -326,7 +326,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         checkForForfeits(user.getUserId());
         if(!gameDAO.gameExists(gameId)) {
             throw new GameServerException(ErrorCode.GAME_NOT_FOUND);
@@ -359,7 +359,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         checkForForfeits(user.getUserId());
         if(!gameDAO.gameExists(gameId)) {
             throw new GameServerException(ErrorCode.GAME_NOT_FOUND);
@@ -409,8 +409,8 @@ public class GameUtils {
 
     private void updateRatings(String winner, String loser) throws GameServerException {
         int k = 20;
-        User w = accountDAO.getUserFromId(winner);
-        User l = accountDAO.getUserFromId(loser);
+        UserInfo w = accountDAO.getUserFromId(winner);
+        UserInfo l = accountDAO.getUserFromId(loser);
 
         //Implement elo diff
         double winnerExpected = 1. / (1 + Math.pow(10, (l.getRating() - w.getRating()) / 400.));
@@ -425,7 +425,7 @@ public class GameUtils {
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UserInfo user = accountDAO.getUserFromUsername(auth.getUsername());
         checkForForfeits(user.getUserId());
 
         return gameDAO.getGameNotifications(user.getUserId());

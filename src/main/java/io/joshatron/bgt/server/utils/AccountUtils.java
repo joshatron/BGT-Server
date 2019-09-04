@@ -6,7 +6,7 @@ import io.joshatron.bgt.server.database.AccountDAO;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.response.State;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,9 +63,9 @@ public class AccountUtils {
         accountDAO.updateUsername(auth.getUsername(), change.getText());
     }
 
-    public User getUserFromId(String id) throws GameServerException {
+    public UserInfo getUserFromId(String id) throws GameServerException {
         if(AiUtils.isAi(id)) {
-            return new User(id.toUpperCase(), id.toUpperCase(), 0, State.NORMAL);
+            return new UserInfo(id.toUpperCase(), id.toUpperCase(), 0, State.NORMAL);
         }
         else {
             Validator.validateId(id);
@@ -73,9 +73,9 @@ public class AccountUtils {
         }
     }
 
-    public User getUserFromUsername(String username) throws GameServerException {
+    public UserInfo getUserFromUsername(String username) throws GameServerException {
         if(AiUtils.isAi(username)) {
-            return new User(username.toUpperCase(), username.toUpperCase(), 0, State.NORMAL);
+            return new UserInfo(username.toUpperCase(), username.toUpperCase(), 0, State.NORMAL);
         }
         else {
             Validator.validateUsername(username);

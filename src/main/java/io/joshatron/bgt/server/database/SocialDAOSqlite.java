@@ -8,7 +8,7 @@ import io.joshatron.bgt.server.request.RecipientType;
 import io.joshatron.bgt.server.response.Message;
 import io.joshatron.bgt.server.response.SocialNotifications;
 import io.joshatron.bgt.server.response.State;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 import io.joshatron.bgt.server.utils.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -263,7 +263,7 @@ public class SocialDAOSqlite implements SocialDAO {
     }
 
     @Override
-    public User[] getIncomingFriendRequests(String user) throws GameServerException {
+    public UserInfo[] getIncomingFriendRequests(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -277,12 +277,12 @@ public class SocialDAOSqlite implements SocialDAO {
             stmt.setString(1, user);
             rs = stmt.executeQuery();
 
-            ArrayList<User> users = new ArrayList<>();
+            ArrayList<UserInfo> users = new ArrayList<>();
             while(rs.next()) {
-                users.add(new User(rs.getString("username"), rs.getString("requester"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
+                users.add(new UserInfo(rs.getString("username"), rs.getString("requester"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
             }
 
-            return users.toArray(new User[0]);
+            return users.toArray(new UserInfo[0]);
         } catch(SQLException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
         } finally {
@@ -292,7 +292,7 @@ public class SocialDAOSqlite implements SocialDAO {
     }
 
     @Override
-    public User[] getOutgoingFriendRequests(String user) throws GameServerException {
+    public UserInfo[] getOutgoingFriendRequests(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -306,12 +306,12 @@ public class SocialDAOSqlite implements SocialDAO {
             stmt.setString(1, user);
             rs = stmt.executeQuery();
 
-            ArrayList<User> users = new ArrayList<>();
+            ArrayList<UserInfo> users = new ArrayList<>();
             while(rs.next()) {
-                users.add(new User(rs.getString("username"), rs.getString("acceptor"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
+                users.add(new UserInfo(rs.getString("username"), rs.getString("acceptor"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
             }
 
-            return users.toArray(new User[0]);
+            return users.toArray(new UserInfo[0]);
         } catch(SQLException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
         } finally {
@@ -321,7 +321,7 @@ public class SocialDAOSqlite implements SocialDAO {
     }
 
     @Override
-    public User[] getFriends(String user) throws GameServerException {
+    public UserInfo[] getFriends(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -335,14 +335,14 @@ public class SocialDAOSqlite implements SocialDAO {
                 "WHERE requester = ?;";
 
         try {
-            ArrayList<User> users = new ArrayList<>();
+            ArrayList<UserInfo> users = new ArrayList<>();
 
             stmt = conn.prepareStatement(getIncoming);
             stmt.setString(1, user);
             rs = stmt.executeQuery();
 
             while(rs.next()) {
-                users.add(new User(rs.getString("username"), rs.getString("requester"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
+                users.add(new UserInfo(rs.getString("username"), rs.getString("requester"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
             }
             rs.close();
 
@@ -351,10 +351,10 @@ public class SocialDAOSqlite implements SocialDAO {
             rs = stmt.executeQuery();
 
             while(rs.next()) {
-                users.add(new User(rs.getString("username"), rs.getString("acceptor"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
+                users.add(new UserInfo(rs.getString("username"), rs.getString("acceptor"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
             }
 
-            return users.toArray(new User[0]);
+            return users.toArray(new UserInfo[0]);
         } catch(SQLException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
         } finally {
@@ -364,7 +364,7 @@ public class SocialDAOSqlite implements SocialDAO {
     }
 
     @Override
-    public User[] getBlocking(String user) throws GameServerException {
+    public UserInfo[] getBlocking(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -374,17 +374,17 @@ public class SocialDAOSqlite implements SocialDAO {
                 "WHERE requester = ?;";
 
         try {
-            ArrayList<User> users = new ArrayList<>();
+            ArrayList<UserInfo> users = new ArrayList<>();
 
             stmt = conn.prepareStatement(getOutgoing);
             stmt.setString(1, user);
             rs = stmt.executeQuery();
 
             while(rs.next()) {
-                users.add(new User(rs.getString("username"), rs.getString("blocked"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
+                users.add(new UserInfo(rs.getString("username"), rs.getString("blocked"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
             }
 
-            return users.toArray(new User[0]);
+            return users.toArray(new UserInfo[0]);
         } catch(SQLException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
         } finally {

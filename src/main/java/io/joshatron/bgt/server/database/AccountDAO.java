@@ -3,7 +3,7 @@ package io.joshatron.bgt.server.database;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.response.State;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 
 public interface AccountDAO {
 
@@ -15,6 +15,6 @@ public interface AccountDAO {
     void updateState(String userId, State state) throws GameServerException;
     boolean userExists(String userId) throws GameServerException;
     boolean usernameExists(String username) throws GameServerException;
-    User getUserFromId(String id) throws GameServerException;
-    User getUserFromUsername(String username) throws GameServerException;
+    UserInfo getUserFromId(String id) throws GameServerException;
+    UserInfo getUserFromUsername(String username) throws GameServerException;
 }

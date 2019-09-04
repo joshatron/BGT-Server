@@ -4,7 +4,7 @@ import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.response.State;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 import io.joshatron.bgt.server.utils.IdUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -264,7 +264,7 @@ public class AccountDAOSqlite implements AccountDAO {
     }
 
     @Override
-    public User getUserFromId(String id) throws GameServerException {
+    public UserInfo getUserFromId(String id) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -278,7 +278,7 @@ public class AccountDAOSqlite implements AccountDAO {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new User(rs.getString("username"), rs.getString("id"), rs.getInt("rating"), State.valueOf(rs.getString("state")));
+                return new UserInfo(rs.getString("username"), rs.getString("id"), rs.getInt("rating"), State.valueOf(rs.getString("state")));
             }
             else {
                 throw new GameServerException(ErrorCode.USER_NOT_FOUND);
@@ -292,7 +292,7 @@ public class AccountDAOSqlite implements AccountDAO {
     }
 
     @Override
-    public User getUserFromUsername(String username) throws GameServerException {
+    public UserInfo getUserFromUsername(String username) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -306,7 +306,7 @@ public class AccountDAOSqlite implements AccountDAO {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new User(rs.getString("username"), rs.getString("id"), rs.getInt("rating"), State.valueOf(rs.getString("state")));
+                return new UserInfo(rs.getString("username"), rs.getString("id"), rs.getInt("rating"), State.valueOf(rs.getString("state")));
             }
             else {
                 throw new GameServerException(ErrorCode.USER_NOT_FOUND);

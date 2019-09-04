@@ -5,7 +5,7 @@ import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.request.Text;
 import io.joshatron.bgt.server.utils.AccountUtils;
-import io.joshatron.bgt.server.response.User;
+import io.joshatron.bgt.server.response.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class AccountController {
     public ResponseEntity findUser(@RequestParam(value = "user", required = false) String username, @RequestParam(value = "id", required = false) String id) {
         try {
             logger.info("Finding user info");
-            User user;
+            UserInfo user;
             if(username == null && id != null) {
                 logger.info("Finding user by ID");
                 user = accountUtils.getUserFromId(id);
