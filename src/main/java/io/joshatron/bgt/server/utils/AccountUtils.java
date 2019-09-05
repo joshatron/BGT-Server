@@ -28,7 +28,7 @@ public class AccountUtils {
             throw new GameServerException(ErrorCode.USERNAME_TAKEN);
         }
 
-        accountDAO.addUser(auth);
+        accountDAO.createUser(auth);
     }
 
     public void updatePassword(Auth auth, Text change) throws GameServerException {
@@ -69,7 +69,7 @@ public class AccountUtils {
         }
         else {
             Validator.validateId(id);
-            return accountDAO.getUserFromId(id);
+            return new UserInfo(accountDAO.getUserFromId(id));
         }
     }
 
@@ -79,7 +79,7 @@ public class AccountUtils {
         }
         else {
             Validator.validateUsername(username);
-            return accountDAO.getUserFromUsername(username);
+            return new UserInfo(accountDAO.getUserFromUsername(username));
         }
     }
 }

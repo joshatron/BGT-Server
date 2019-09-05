@@ -6,4 +6,5 @@ dependency-reduced-pom.xml
 *.iml
 *.swp
 server.db
+server.mv.db
 keystore.p12
