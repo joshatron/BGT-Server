@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class GameUtils {
@@ -38,8 +39,9 @@ public class GameUtils {
     public void requestGame(Auth auth, String other, GameRequest gameRequest) throws GameServerException {
         Validator.validateAuth(auth);
         boolean ai = AiUtils.isAi(other);
+        UUID otherId = null;
         if(!ai) {
-            Validator.validateId(other);
+            otherId = Validator.validateId(other);
         }
         Validator.validateGameBoardSize(gameRequest.getSize());
         Player requesterColor = Validator.validatePlayer(gameRequest.getRequesterColor());
@@ -48,7 +50,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!ai && !accountDAO.userExists(other)) {
+        if(!ai && !accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
         if(!ai && !socialDAO.areFriends(user.getId().toString(), other)) {
@@ -81,12 +83,12 @@ public class GameUtils {
 
     public void deleteRequest(Auth auth, String other) throws GameServerException {
         Validator.validateAuth(auth);
-        Validator.validateId(other);
+        UUID otherId = Validator.validateId(other);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(other)) {
+        if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
         if(!gameDAO.gameRequestExists(user.getId().toString(), other)) {
@@ -98,14 +100,14 @@ public class GameUtils {
 
     public void respondToGame(Auth auth, String id, Text answer) throws GameServerException {
         Validator.validateAuth(auth);
-        Validator.validateId(id);
+        UUID uuid = Validator.validateId(id);
         Validator.validateText(answer);
         Answer response = Validator.validateAnswer(answer.getText());
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(id)) {
+        if(!accountDAO.userExists(uuid)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
         if(!gameDAO.gameRequestExists(id, user.getId().toString())) {
@@ -271,8 +273,8 @@ public class GameUtils {
             users = opponents.split(",");
             for (String u : users) {
                 if(!AiUtils.isAi(u)) {
-                    Validator.validateId(u);
-                    if (!accountDAO.userExists(u)) {
+                    UUID uuid = Validator.validateId(u);
+                    if (!accountDAO.userExists(uuid)) {
                         throw new GameServerException(ErrorCode.USER_NOT_FOUND);
                     }
                 }
@@ -410,15 +412,19 @@ public class GameUtils {
 
     private void updateRatings(String winner, String loser) throws GameServerException {
         int k = 20;
-        User w = accountDAO.getUserFromId(winner);
-        User l = accountDAO.getUserFromId(loser);
+
+        UUID winnerId = Validator.validateId(winner);
+        UUID loserId = Validator.validateId(loser);
+
+        User w = accountDAO.getUserFromId(winnerId);
+        User l = accountDAO.getUserFromId(loserId);
 
         //Implement elo diff
         double winnerExpected = 1. / (1 + Math.pow(10, (l.getRating() - w.getRating()) / 400.));
         double loserExpected = 1. / (1 + Math.pow(10, (w.getRating() - l.getRating()) / 400.));
 
-        accountDAO.updateRating(winner, (int)Math.round(w.getRating() + k * (1 - winnerExpected)));
-        accountDAO.updateRating(loser, (int)Math.round(l.getRating() + k * (0 - loserExpected)));
+        accountDAO.updateRating(winnerId, (int)Math.round(w.getRating() + k * (1 - winnerExpected)));
+        accountDAO.updateRating(loserId, (int)Math.round(l.getRating() + k * (0 - loserExpected)));
     }
 
     public GameNotifications getNotifications(Auth auth) throws GameServerException {

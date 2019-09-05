@@ -10,6 +10,8 @@ import io.joshatron.bgt.server.response.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class AccountUtils {
 
@@ -43,7 +45,7 @@ public class AccountUtils {
             throw new GameServerException(ErrorCode.SAME_PASSWORD);
         }
 
-        accountDAO.updatePassword(auth.getUsername(), change.getText());
+        accountDAO.updatePassword(accountDAO.getUserFromUsername(auth.getUsername()).getId(), change.getText());
     }
 
     public void updateUsername(Auth auth, Text change) throws GameServerException {
@@ -60,7 +62,7 @@ public class AccountUtils {
             throw new GameServerException(ErrorCode.USERNAME_TAKEN);
         }
 
-        accountDAO.updateUsername(auth.getUsername(), change.getText());
+        accountDAO.updateUsername(accountDAO.getUserFromUsername(auth.getUsername()).getId(), change.getText());
     }
 
     public UserInfo getUserFromId(String id) throws GameServerException {
@@ -69,7 +71,7 @@ public class AccountUtils {
         }
         else {
             Validator.validateId(id);
-            return new UserInfo(accountDAO.getUserFromId(id));
+            return new UserInfo(accountDAO.getUserFromId(UUID.fromString(id)));
         }
     }
 

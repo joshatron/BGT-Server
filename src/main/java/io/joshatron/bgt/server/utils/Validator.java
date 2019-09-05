@@ -6,6 +6,7 @@ import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class Validator {
 
@@ -43,16 +44,15 @@ public class Validator {
         }
     }
 
-    public static void validateId(String id) throws GameServerException {
+    public static UUID validateId(String id) throws GameServerException {
         if(id == null || id.length() == 0) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
 
-        if(id.length() != 36) {
-            throw new GameServerException(ErrorCode.INVALID_LENGTH);
+        try {
+            return UUID.fromString(id);
         }
-
-        if(id.matches("/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/")) {
+        catch(IllegalArgumentException e) {
             throw new GameServerException(ErrorCode.INVALID_FORMATTING);
         }
     }

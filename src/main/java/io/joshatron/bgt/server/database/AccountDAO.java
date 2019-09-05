@@ -5,6 +5,7 @@ import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.response.State;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class AccountDAO {
@@ -26,80 +28,113 @@ public class AccountDAO {
     private Integer maxFailed;
 
     public boolean isAuthenticated(Auth auth) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        User user = getUserFromId(session, auth.getUsername());
-
-        if(user.getState() == State.LOCKED) {
-            throw new GameServerException(ErrorCode.LOCKED_OUT);
-        }
-        else if(user.getState() == State.BANNED) {
-            throw new GameServerException(ErrorCode.BANNED);
-        }
-
-        boolean authorized = (auth.getUsername().equals(user.getUsername())) &&
-                BCrypt.checkpw(auth.getPassword(), user.getPassword());
-
-        if(authorized) {
-            user.updateLastActivity();
-            user.setLoginsFailed(0);
-        }
-        else {
-            if(maxFailed > 0 && user.getLoginsFailed() + 1 >= maxFailed) {
-                user.setState(State.LOCKED);
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            User user;
+            try {
+                user = getUserFromUsername(session, auth.getUsername());
+            } catch(GameServerException e) {
+                return false;
             }
-            user.incrementFailed();
-        }
-        transaction.commit();
 
-        return authorized;
+            if(user.getState() == State.LOCKED) {
+                throw new GameServerException(ErrorCode.LOCKED_OUT);
+            } else if(user.getState() == State.BANNED) {
+                throw new GameServerException(ErrorCode.BANNED);
+            }
+
+            boolean authorized = (auth.getUsername().equals(user.getUsername())) &&
+                    BCrypt.checkpw(auth.getPassword(), user.getPassword());
+
+            if(authorized) {
+                user.updateLastActivity();
+                user.setLoginsFailed(0);
+            } else {
+                if(maxFailed > 0 && user.getLoginsFailed() + 1 >= maxFailed) {
+                    user.setState(State.LOCKED);
+                }
+                user.incrementFailed();
+            }
+            transaction.commit();
+
+            return authorized;
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
     public void createUser(Auth auth) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
 
-        User user = new User();
-        user.setUsername(auth.getUsername());
-        user.setPassword(BCrypt.hashpw(auth.getPassword(), BCrypt.gensalt(bcryptRounds)));
+            User user = new User();
+            user.setUsername(auth.getUsername());
+            user.setPassword(BCrypt.hashpw(auth.getPassword(), BCrypt.gensalt(bcryptRounds)));
 
-        session.save(user);
-        transaction.commit();
+            session.save(user);
+            transaction.commit();
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
-    public void updatePassword(String userId, String password) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        User user = getUserFromId(session, userId);
-        user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt(bcryptRounds)));
-        transaction.commit();
+    public void updatePassword(UUID userId, String password) throws GameServerException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            User user = getUserFromId(session, userId);
+            user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt(bcryptRounds)));
+            transaction.commit();
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
-    public void updateUsername(String userId, String username) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        User user = getUserFromId(session, userId);
-        user.setUsername(username);
-        transaction.commit();
+    public void updateUsername(UUID userId, String username) throws GameServerException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            User user = getUserFromId(session, userId);
+            user.setUsername(username);
+            transaction.commit();
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
-    public void updateRating(String userId, int rating) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        User user = getUserFromId(session, userId);
-        user.setRating(rating);
-        transaction.commit();
+    public void updateRating(UUID userId, int rating) throws GameServerException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            User user = getUserFromId(session, userId);
+            user.setRating(rating);
+            transaction.commit();
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
-    public void updateState(String userId, State state) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        User user = getUserFromId(session, userId);
-        user.setState(state);
-        transaction.commit();
+    public void updateState(UUID userId, State state) throws GameServerException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            User user = getUserFromId(session, userId);
+            user.setState(state);
+            transaction.commit();
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
-    public boolean userExists(String userId) throws GameServerException {
+    public boolean userExists(UUID userId) throws GameServerException {
         try {
             getUserFromId(userId);
             return true;
@@ -117,32 +152,48 @@ public class AccountDAO {
         }
     }
 
-    public User getUserFromId(String id) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        return getUserFromId(session, id);
+    public User getUserFromId(UUID id) throws GameServerException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            return getUserFromId(session, id);
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
-    private User getUserFromId(Session session, String userId) throws GameServerException {
+    private User getUserFromId(Session session, UUID userId) throws GameServerException {
         Query<User> query = session.createQuery("from User u where u.id=:id", User.class);
         query.setParameter("id", userId);
         List<User> users = query.list();
-        if(users.size() != 1) {
+        if(users.size() > 1) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
+        if(users.isEmpty()) {
+            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
         return users.get(0);
     }
 
     public User getUserFromUsername(String username) throws GameServerException {
-        Session session = sessionFactory.getCurrentSession();
-        return getUserFromUsername(session, username);
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            return getUserFromUsername(session, username);
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
     private User getUserFromUsername(Session session, String username) throws GameServerException {
-        Query<User> query = session.createQuery("from User u where u.username=:username", User.class);
-        query.setParameter("username", username);
+        Query<User> query = session.createQuery("from User u where lower(u.username)=:username", User.class);
+        query.setParameter("username", username.toLowerCase());
         List<User> users = query.list();
-        if(users.size() != 1) {
+        if(users.size() > 1) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
+        if(users.isEmpty()) {
+            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
         return users.get(0);
     }
