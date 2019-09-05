@@ -1,0 +1,6 @@
+<suite name="Game Suite">
+    <suite-files>
+        <suite-file path="game-parallel.xml"/>
+        <suite-file path="game-serial.xml"/>
+    </suite-files>
+</suite>

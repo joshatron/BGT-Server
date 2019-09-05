@@ -1,0 +1,12 @@
+<suite parallel="methods" thread-count="20" name="Parallel Game Suite">
+    <test name="Parallel Game Test">
+        <groups>
+            <run>
+                <include name="parallel"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="io.joshatron.bgt.server.logic.GameTest"/>
+        </classes>
+    </test>
+</suite>

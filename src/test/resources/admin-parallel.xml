@@ -1,0 +1,12 @@
+<suite parallel="methods" thread-count="20" name="Parallel Admin Suite">
+    <test name="Parallel Admin Test">
+        <groups>
+            <run>
+                <include name="parallel"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="io.joshatron.bgt.server.logic.AdminTest"/>
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,7 @@
+<suite parallel="methods" thread-count="20" name="Account Suite">
+    <test name="Account Test">
+        <classes>
+            <class name="io.joshatron.bgt.server.logic.AccountTest"/>
+        </classes>
+    </test>
+</suite>

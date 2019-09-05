@@ -1,0 +1,12 @@
+<suite name="Serial Game Suite">
+    <test name="Serial Game Test">
+        <groups>
+            <run>
+                <include name="serial"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="io.joshatron.bgt.server.logic.GameTest"/>
+        </classes>
+    </test>
+</suite>

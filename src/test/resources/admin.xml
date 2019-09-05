@@ -1,0 +1,6 @@
+<suite name="Admin Suite">
+    <suite-files>
+        <suite-file path="admin-parallel.xml"/>
+        <suite-file path="admin-serial.xml"/>
+    </suite-files>
+</suite>

@@ -1,0 +1,7 @@
+<suite parallel="methods" thread-count="20" name="Social Suite">
+    <test name="Social Test">
+        <classes>
+            <class name="io.joshatron.bgt.server.logic.SocialTest"/>
+        </classes>
+    </test>
+</suite>

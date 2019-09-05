@@ -1,0 +1,12 @@
+<suite name="Serial Admin Suite">
+    <test name="Serial Admin Test">
+        <groups>
+            <run>
+                <include name="serial"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="io.joshatron.bgt.server.logic.AdminTest"/>
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,8 @@
+<suite name="All Suites">
+    <suite-files>
+        <suite-file path="account.xml"/>
+        <suite-file path="admin.xml"/>
+        <suite-file path="game.xml"/>
+        <suite-file path="social.xml"/>
+    </suite-files>
+</suite>

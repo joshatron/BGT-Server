@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+command -v mvn >/dev/null 2>&1 || { echo >&2 "Maven is required for setup. Aborting."; exit 1; }
+
+suite=$1
+if [ -z "$1" ]; then
+    suite=all
+fi 
+
+mvn test -DskipTests=false -DsuiteXmlFile=$suite
