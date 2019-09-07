@@ -22,204 +22,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Component
-public class SocialDAOSqlite implements SocialDAO {
-
-    @Autowired
+public class SocialDAOSqlite {
     private Connection conn;
 
-    @Override
-    public boolean friendRequestExists(String requester, String other) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String checkRequest = "SELECT requester, acceptor " +
-                "FROM friend_requests " +
-                "WHERE (requester = ? AND acceptor = ?) OR (requester = ? AND acceptor = ?);";
-
-        try {
-            stmt = conn.prepareStatement(checkRequest);
-            stmt.setString(1, requester);
-            stmt.setString(2, other);
-            stmt.setString(3, other);
-            stmt.setString(4, requester);
-            rs = stmt.executeQuery();
-
-            return rs.next();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
-    }
-
-    @Override
-    public boolean areFriends(String user1, String user2) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String checkFriends = "SELECT requester, acceptor " +
-                "FROM friends " +
-                "WHERE (requester = ? AND acceptor = ?) OR (requester = ? AND acceptor = ?);";
-
-        try {
-            stmt = conn.prepareStatement(checkFriends);
-            stmt.setString(1, user1);
-            stmt.setString(2, user2);
-            stmt.setString(3, user2);
-            stmt.setString(4, user1);
-            rs = stmt.executeQuery();
-
-            return rs.next();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
-    }
-
-    @Override
-    public boolean isBlocked(String requester, String other) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String checkBlocked = "SELECT requester " +
-                "FROM blocked " +
-                "WHERE (requester = ? AND blocked = ?);";
-
-        try {
-            stmt = conn.prepareStatement(checkBlocked);
-            stmt.setString(1, other);
-            stmt.setString(2, requester);
-            rs = stmt.executeQuery();
-
-            return rs.next();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
-    }
-
-    @Override
-    public void createFriendRequest(String requester, String other) throws GameServerException {
-        PreparedStatement stmt = null;
-
-        String insertRequest = "INSERT INTO friend_requests (requester, acceptor) " +
-                "VALUES (?,?);";
-
-        try {
-            stmt = conn.prepareStatement(insertRequest);
-            stmt.setString(1, requester);
-            stmt.setString(2, other);
-            stmt.executeUpdate();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-        }
-    }
-
-    @Override
-    public void deleteFriendRequest(String requester, String other) throws GameServerException {
-        PreparedStatement stmt = null;
-
-        String deleteRequest = "DELETE FROM friend_requests " +
-                "WHERE requester = ? AND acceptor = ?;";
-
-        try {
-            stmt = conn.prepareStatement(deleteRequest);
-            stmt.setString(1, requester);
-            stmt.setString(2, other);
-            stmt.executeUpdate();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-        }
-    }
-
-    @Override
-    public void makeFriends(String user1, String user2) throws GameServerException {
-        PreparedStatement stmt = null;
-
-        String insertFriend = "INSERT INTO friends (requester, acceptor) " +
-                "VALUES (?,?);";
-
-        try {
-            stmt = conn.prepareStatement(insertFriend);
-            stmt.setString(1, user1);
-            stmt.setString(2, user2);
-            stmt.executeUpdate();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-        }
-    }
-
-    @Override
-    public void unfriend(String requester, String other) throws GameServerException {
-        PreparedStatement stmt = null;
-
-        String deleteFriend = "DELETE FROM friends " +
-                "WHERE (requester = ? AND acceptor = ?) OR (requester = ? AND acceptor = ?);";
-
-        try {
-            stmt = conn.prepareStatement(deleteFriend);
-            stmt.setString(1, requester);
-            stmt.setString(2, other);
-            stmt.setString(3, other);
-            stmt.setString(4, requester);
-            stmt.executeUpdate();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-        }
-    }
-
-    @Override
-    public void block(String requester, String other) throws GameServerException {
-        PreparedStatement stmt = null;
-
-        String insertBlock = "INSERT INTO blocked (requester, blocked) " +
-                "VALUES (?,?);";
-
-        try {
-            stmt = conn.prepareStatement(insertBlock);
-            stmt.setString(1, requester);
-            stmt.setString(2, other);
-            stmt.executeUpdate();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-        }
-    }
-
-    @Override
-    public void unblock(String requester, String other) throws GameServerException {
-        PreparedStatement stmt = null;
-
-        String deleteBlock = "DELETE FROM blocked " +
-                "WHERE requester = ? AND blocked = ?;";
-
-        try {
-            stmt = conn.prepareStatement(deleteBlock);
-            stmt.setString(1, requester);
-            stmt.setString(2, other);
-            stmt.executeUpdate();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-        }
-    }
-
-    @Override
     public void sendMessage(String requester, String other, String text, RecipientType recipientType) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -243,7 +48,7 @@ public class SocialDAOSqlite implements SocialDAO {
         }
     }
 
-    @Override
+
     public void markMessageRead(String id) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -262,7 +67,7 @@ public class SocialDAOSqlite implements SocialDAO {
         }
     }
 
-    @Override
+
     public UserInfo[] getIncomingFriendRequests(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -291,7 +96,7 @@ public class SocialDAOSqlite implements SocialDAO {
         }
     }
 
-    @Override
+
     public UserInfo[] getOutgoingFriendRequests(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -320,7 +125,7 @@ public class SocialDAOSqlite implements SocialDAO {
         }
     }
 
-    @Override
+
     public UserInfo[] getFriends(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -363,7 +168,7 @@ public class SocialDAOSqlite implements SocialDAO {
         }
     }
 
-    @Override
+
     public UserInfo[] getBlocking(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -393,7 +198,7 @@ public class SocialDAOSqlite implements SocialDAO {
         }
     }
 
-    @Override
+
     public Message[] listMessages(String userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -510,7 +315,7 @@ public class SocialDAOSqlite implements SocialDAO {
         return getMessage.toString();
     }
 
-    @Override
+
     public SocialNotifications getSocialNotifications(String userId) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;

@@ -1,5 +1,6 @@
 package io.joshatron.bgt.server.response;
 
+import io.joshatron.bgt.server.database.model.UserMessage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,4 +15,8 @@ public class Message {
     private String message;
     private String id;
     private boolean opened;
+
+    public Message(UserMessage userMessage) {
+        //TODO: implement
+    }
 }

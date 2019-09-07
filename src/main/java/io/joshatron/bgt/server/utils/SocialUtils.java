@@ -1,6 +1,7 @@
 package io.joshatron.bgt.server.utils;
 
 import io.joshatron.bgt.server.database.model.User;
+import io.joshatron.bgt.server.database.model.UserMessage;
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.database.AccountDAO;
 import io.joshatron.bgt.server.database.SocialDAO;
@@ -13,12 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Component
 public class SocialUtils {
-
-    public static final int MESSAGE_ID_LENGTH = 20;
 
     @Autowired
     private SocialDAO socialDAO;
@@ -35,23 +35,23 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(socialDAO.isBlocked(user.getId().toString(), other)) {
+        if(socialDAO.isBlocked(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.BLOCKED);
         }
-        if(socialDAO.isBlocked(other, user.getId().toString())) {
+        if(socialDAO.isBlocked(otherId, user.getId())) {
             throw new GameServerException(ErrorCode.BLOCKING);
         }
-        if(socialDAO.friendRequestExists(user.getId().toString(), other)) {
+        if(socialDAO.friendRequestExists(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.ALREADY_REQUESTING);
         }
-        if(socialDAO.areFriends(user.getId().toString(), other)) {
+        if(socialDAO.areFriends(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
         }
-        if(user.getId().toString().equalsIgnoreCase(other)) {
+        if(user.getId().equals(otherId)) {
             throw new GameServerException(ErrorCode.REQUESTING_SELF);
         }
 
-        socialDAO.createFriendRequest(user.getId().toString(), other);
+        socialDAO.createFriendRequest(user.getId(), otherId);
     }
 
     public void deleteFriendRequest(Auth auth, String other) throws GameServerException {
@@ -64,11 +64,11 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.friendRequestExists(user.getId().toString(), other)) {
+        if(!socialDAO.friendRequestExists(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        socialDAO.deleteFriendRequest(user.getId().toString(), other);
+        socialDAO.deleteFriendRequest(user.getId(), otherId);
     }
 
     public void respondToFriendRequest(Auth auth, String other, Text answer) throws GameServerException {
@@ -83,14 +83,14 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.friendRequestExists(user.getId().toString(), other)) {
+        if(!socialDAO.friendRequestExists(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
         if(response == Answer.ACCEPT) {
-            socialDAO.makeFriends(other, user.getId().toString());
+            socialDAO.makeFriends(otherId, user.getId());
         }
-        socialDAO.deleteFriendRequest(other, user.getId().toString());
+        socialDAO.deleteFriendRequest(otherId, user.getId());
     }
 
     public UserInfo[] listIncomingFriendRequests(Auth auth) throws GameServerException {
@@ -100,7 +100,7 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
 
-        return socialDAO.getIncomingFriendRequests(user.getId().toString());
+        return user.getIncomingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public UserInfo[] listOutgoingFriendRequests(Auth auth) throws GameServerException {
@@ -110,7 +110,7 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
 
-        return socialDAO.getOutgoingFriendRequests(user.getId().toString());
+        return user.getOutgoingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public void unfriend(Auth auth, String other) throws GameServerException {
@@ -123,11 +123,11 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.areFriends(user.getId().toString(), other)) {
+        if(!socialDAO.areFriends(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.FRIEND_NOT_FOUND);
         }
 
-        socialDAO.unfriend(user.getId().toString(), other);
+        socialDAO.unfriend(user.getId(), otherId);
     }
 
     public void blockUser(Auth auth, String other) throws GameServerException {
@@ -140,22 +140,22 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(socialDAO.isBlocked(other, user.getId().toString())) {
+        if(socialDAO.isBlocked(otherId, user.getId())) {
             throw new GameServerException(ErrorCode.ALREADY_BLOCKED);
         }
-        if(user.getId().toString().equalsIgnoreCase(other)) {
+        if(user.getId().equals(otherId)) {
             throw new GameServerException(ErrorCode.BLOCKING_SELF);
         }
 
-        socialDAO.block(user.getId().toString(), other);
-        if(socialDAO.areFriends(user.getId().toString(), other)) {
-            socialDAO.unfriend(user.getId().toString(), other);
+        socialDAO.block(user.getId(), otherId);
+        if(socialDAO.areFriends(user.getId(), otherId)) {
+            socialDAO.unfriend(user.getId(), otherId);
         }
-        if(socialDAO.friendRequestExists(user.getId().toString(), other)) {
-            socialDAO.deleteFriendRequest(user.getId().toString(), other);
+        if(socialDAO.friendRequestExists(user.getId(), otherId)) {
+            socialDAO.deleteFriendRequest(user.getId(), otherId);
         }
-        if(socialDAO.friendRequestExists(other, user.getId().toString())) {
-            socialDAO.deleteFriendRequest(other, user.getId().toString());
+        if(socialDAO.friendRequestExists(otherId, user.getId())) {
+            socialDAO.deleteFriendRequest(otherId, user.getId());
         }
     }
 
@@ -169,11 +169,11 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.isBlocked(other, user.getId().toString())) {
+        if(!socialDAO.isBlocked(otherId, user.getId())) {
             throw new GameServerException(ErrorCode.NOT_BLOCKED);
         }
 
-        socialDAO.unblock(user.getId().toString(), other);
+        socialDAO.unblock(user.getId(), otherId);
     }
 
     public boolean isBlocked(Auth auth, String other) throws GameServerException {
@@ -187,7 +187,7 @@ public class SocialUtils {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
 
-        return socialDAO.isBlocked(user.getId().toString(), other);
+        return socialDAO.isBlocked(user.getId(), otherId);
     }
 
     public UserInfo[] listFriends(Auth auth) throws GameServerException {
@@ -197,7 +197,7 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
 
-        return socialDAO.getFriends(user.getId().toString());
+        return user.getFriends().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public UserInfo[] listBlocked(Auth auth) throws GameServerException {
@@ -207,7 +207,7 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
 
-        return socialDAO.getBlocking(user.getId().toString());
+        return user.getFriends().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public void sendMessage(Auth auth, String other, Text sendMessage) throws GameServerException {
@@ -221,7 +221,7 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(socialDAO.isBlocked(user.getId().toString(), other)) {
+        if(socialDAO.isBlocked(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.BLOCKED);
         }
         if(sendMessage.getText().length() == 0) {
@@ -231,7 +231,7 @@ public class SocialUtils {
             throw new GameServerException(ErrorCode.MESSAGE_TOO_LONG);
         }
 
-        socialDAO.sendMessage(user.getId().toString(), other, sendMessage.getText(), RecipientType.PLAYER);
+        socialDAO.sendMessage(user.getId(), otherId, sendMessage.getText(), RecipientType.PLAYER);
     }
 
     public Message[] listMessages(Auth auth, String senders, Long startTime, Long endTime, String read, String from) throws GameServerException {
@@ -261,15 +261,15 @@ public class SocialUtils {
         }
         From frm = Validator.validateFrom(from);
 
-        Message[] messages = socialDAO.listMessages(user.getId().toString(), users, start, end, rd, frm, RecipientType.PLAYER);
-        for(Message message : messages) {
-            if(!message.getSender().equalsIgnoreCase(user.getId().toString())) {
-                socialDAO.markMessageRead(message.getId().toString());
+        List<UserMessage> messages = socialDAO.listMessages(user.getId(), users, start, end, rd, frm, RecipientType.PLAYER);
+        for(UserMessage message : messages) {
+            if(!message.getSender().equals(user.getId())) {
+                socialDAO.markMessageRead(message.getId());
                 message.setOpened(true);
             }
         }
 
-        return messages;
+        return messages.parallelStream().map(Message::new).toArray(Message[]::new);
     }
 
     public SocialNotifications getNotifications(Auth auth) throws GameServerException {
@@ -279,6 +279,6 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
 
-        return socialDAO.getSocialNotifications(user.getId().toString());
+        return socialDAO.getSocialNotifications(user.getId());
     }
 }
