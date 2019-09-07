@@ -34,11 +34,15 @@ public class User {
     private Timestamp lastActivity;
     @ManyToMany(cascade = ALL)
     private List<User> friends;
-    @ManyToMany
+    @ManyToMany(cascade = ALL,mappedBy = "friends")
+    private List<User> isFriend;
+    @ManyToMany(cascade = ALL)
     private List<User> blocking;
-    @ManyToMany
+    @ManyToMany(cascade = ALL,mappedBy = "blocking")
+    private List<User> blocked;
+    @ManyToMany(cascade = ALL)
     private List<User> outgoingFriendRequests;
-    @ManyToMany
+    @ManyToMany(mappedBy = "outgoingFriendRequests", cascade = ALL)
     private List<User> incomingFriendRequests;
 
     public User() {

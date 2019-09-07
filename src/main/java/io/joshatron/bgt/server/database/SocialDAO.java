@@ -1,25 +1,27 @@
 package io.joshatron.bgt.server.database;
 
 import io.joshatron.bgt.server.database.model.User;
-import io.joshatron.bgt.server.database.model.UserMessage;
+import io.joshatron.bgt.server.database.model.Message;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.From;
 import io.joshatron.bgt.server.request.Read;
 import io.joshatron.bgt.server.request.RecipientType;
-import io.joshatron.bgt.server.response.Message;
 import io.joshatron.bgt.server.response.SocialNotifications;
-import io.joshatron.bgt.server.response.UserInfo;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class SocialDAO {
     @Autowired
     private SessionFactory sessionFactory;
@@ -144,14 +146,39 @@ public class SocialDAO {
     }
 
     public void markMessageRead(UUID id) throws GameServerException {
-
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Transaction transaction = session.beginTransaction();
+            Query<Message> query = session.createQuery("from Message m where m.id=:id", Message.class);
+            query.setParameter("id", id);
+            List<Message> messages = query.list();
+            if(messages.size() > 1) {
+                throw new GameServerException(ErrorCode.DATABASE_ERROR);
+            }
+            if(messages.isEmpty()) {
+                throw new GameServerException(ErrorCode.USER_NOT_FOUND);
+            }
+            Message message = messages.get(0);
+            message.setOpened(true);
+            transaction.commit();
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
-    public List<UserMessage> listMessages(UUID userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
-        return null;
+    public List<Message> listMessages(UUID userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
+        return new ArrayList<>();
     }
 
     public SocialNotifications getSocialNotifications(UUID userId) throws GameServerException {
-        return null;
+        try {
+            User user = accountDAO.getUserFromId(userId);
+            List<Message> messages = listMessages(userId, null, null, null, Read.NOT_READ, From.THEM, null);
+            return new SocialNotifications(user.getIncomingFriendRequests().size(), messages.size());
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 }

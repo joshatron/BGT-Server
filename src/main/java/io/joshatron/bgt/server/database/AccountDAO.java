@@ -162,7 +162,7 @@ public class AccountDAO {
         }
     }
 
-    private User getUserFromId(Session session, UUID userId) throws GameServerException {
+    public User getUserFromId(Session session, UUID userId) throws GameServerException {
         Query<User> query = session.createQuery("from User u where u.id=:id", User.class);
         query.setParameter("id", userId);
         List<User> users = query.list();

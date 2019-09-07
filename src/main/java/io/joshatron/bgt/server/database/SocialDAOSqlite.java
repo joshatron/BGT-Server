@@ -5,12 +5,11 @@ import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.From;
 import io.joshatron.bgt.server.request.Read;
 import io.joshatron.bgt.server.request.RecipientType;
-import io.joshatron.bgt.server.response.Message;
+import io.joshatron.bgt.server.response.UserMessage;
 import io.joshatron.bgt.server.response.SocialNotifications;
 import io.joshatron.bgt.server.response.State;
 import io.joshatron.bgt.server.response.UserInfo;
 import io.joshatron.bgt.server.utils.IdUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -49,162 +48,12 @@ public class SocialDAOSqlite {
     }
 
 
-    public void markMessageRead(String id) throws GameServerException {
-        PreparedStatement stmt = null;
-
-        String markRead = "UPDATE messages " +
-                "SET opened = 1 " +
-                "WHERE id = ?;";
-
-        try {
-            stmt = conn.prepareStatement(markRead);
-            stmt.setString(1, id);
-            stmt.executeUpdate();
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-        }
-    }
-
-
-    public UserInfo[] getIncomingFriendRequests(String user) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String getIncoming = "SELECT users.username as username, users.rating as rating, users.state as state, requester " +
-                "FROM friend_requests " +
-                "LEFT OUTER JOIN users on friend_requests.requester = users.id " +
-                "WHERE acceptor = ?;";
-
-        try {
-            stmt = conn.prepareStatement(getIncoming);
-            stmt.setString(1, user);
-            rs = stmt.executeQuery();
-
-            ArrayList<UserInfo> users = new ArrayList<>();
-            while(rs.next()) {
-                users.add(new UserInfo(rs.getString("username"), rs.getString("requester"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
-            }
-
-            return users.toArray(new UserInfo[0]);
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
-    }
-
-
-    public UserInfo[] getOutgoingFriendRequests(String user) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String getOutgoing = "SELECT users.username as username, users.rating as rating, users.state as state, acceptor " +
-                "FROM friend_requests " +
-                "LEFT OUTER JOIN users on friend_requests.acceptor = users.id " +
-                "WHERE requester = ?;";
-
-        try {
-            stmt = conn.prepareStatement(getOutgoing);
-            stmt.setString(1, user);
-            rs = stmt.executeQuery();
-
-            ArrayList<UserInfo> users = new ArrayList<>();
-            while(rs.next()) {
-                users.add(new UserInfo(rs.getString("username"), rs.getString("acceptor"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
-            }
-
-            return users.toArray(new UserInfo[0]);
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
-    }
-
-
-    public UserInfo[] getFriends(String user) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String getIncoming = "SELECT users.username as username, users.rating as rating, users.state as state, requester " +
-                "FROM friends " +
-                "LEFT OUTER JOIN users on friends.requester = users.id " +
-                "WHERE acceptor = ?;";
-        String getOutgoing = "SELECT users.username as username, users.rating as rating, users.state as state, acceptor " +
-                "FROM friends " +
-                "LEFT OUTER JOIN users on friends.acceptor = users.id " +
-                "WHERE requester = ?;";
-
-        try {
-            ArrayList<UserInfo> users = new ArrayList<>();
-
-            stmt = conn.prepareStatement(getIncoming);
-            stmt.setString(1, user);
-            rs = stmt.executeQuery();
-
-            while(rs.next()) {
-                users.add(new UserInfo(rs.getString("username"), rs.getString("requester"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
-            }
-            rs.close();
-
-            stmt = conn.prepareStatement(getOutgoing);
-            stmt.setString(1, user);
-            rs = stmt.executeQuery();
-
-            while(rs.next()) {
-                users.add(new UserInfo(rs.getString("username"), rs.getString("acceptor"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
-            }
-
-            return users.toArray(new UserInfo[0]);
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
-    }
-
-
-    public UserInfo[] getBlocking(String user) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String getOutgoing = "SELECT users.username as username, users.rating as rating, users.state as state, blocked " +
-                "FROM blocked " +
-                "LEFT OUTER JOIN users on blocked.blocked = users.id " +
-                "WHERE requester = ?;";
-
-        try {
-            ArrayList<UserInfo> users = new ArrayList<>();
-
-            stmt = conn.prepareStatement(getOutgoing);
-            stmt.setString(1, user);
-            rs = stmt.executeQuery();
-
-            while(rs.next()) {
-                users.add(new UserInfo(rs.getString("username"), rs.getString("blocked"), rs.getInt("rating"), State.valueOf(rs.getString("state"))));
-            }
-
-            return users.toArray(new UserInfo[0]);
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
-    }
-
-
-    public Message[] listMessages(String userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
+    public UserMessage[] listMessages(String userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            ArrayList<Message> messages = new ArrayList<>();
+            ArrayList<UserMessage> messages = new ArrayList<>();
 
             stmt = conn.prepareStatement(generateMessageQuery(users, start, end, read, from, recipient));
             int i = 1;
@@ -234,11 +83,11 @@ public class SocialDAOSqlite {
             rs = stmt.executeQuery();
 
             while(rs.next()) {
-                messages.add(new Message(rs.getString("sender"), rs.getString("recipient"), rs.getLong("time"),
+                messages.add(new UserMessage(rs.getString("sender"), rs.getString("recipient"), rs.getLong("time"),
                         rs.getString("message"), rs.getString("id"), (rs.getInt("opened") != 0)));
             }
 
-            return messages.toArray(new Message[0]);
+            return messages.toArray(new UserMessage[0]);
         } catch(SQLException e) {
             e.printStackTrace();
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
@@ -313,38 +162,5 @@ public class SocialDAOSqlite {
         getMessage.append(";");
 
         return getMessage.toString();
-    }
-
-
-    public SocialNotifications getSocialNotifications(String userId) throws GameServerException {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        String countRequests = "SELECT COUNT(*) AS total " +
-                "FROM friend_requests " +
-                "WHERE acceptor = ?;";
-        String countMessages = "SELECT COUNT(*) AS total " +
-                "FROM messages " +
-                "WHERE recipient = ? AND opened = 0;";
-
-        try {
-            stmt = conn.prepareStatement(countRequests);
-            stmt.setString(1, userId);
-            rs = stmt.executeQuery();
-            int requests = rs.getInt("total");
-            rs.close();
-
-            stmt = conn.prepareStatement(countMessages);
-            stmt.setString(1, userId);
-            rs = stmt.executeQuery();
-            int messages = rs.getInt("total");
-
-            return new SocialNotifications(requests, messages);
-        } catch(SQLException e) {
-            throw new GameServerException(ErrorCode.DATABASE_ERROR);
-        } finally {
-            SqliteManager.closeStatement(stmt);
-            SqliteManager.closeResultSet(rs);
-        }
     }
 }

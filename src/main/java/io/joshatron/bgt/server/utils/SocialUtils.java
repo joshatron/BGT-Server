@@ -1,13 +1,13 @@
 package io.joshatron.bgt.server.utils;
 
 import io.joshatron.bgt.server.database.model.User;
-import io.joshatron.bgt.server.database.model.UserMessage;
+import io.joshatron.bgt.server.database.model.Message;
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.database.AccountDAO;
 import io.joshatron.bgt.server.database.SocialDAO;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
-import io.joshatron.bgt.server.response.Message;
+import io.joshatron.bgt.server.response.UserMessage;
 import io.joshatron.bgt.server.response.SocialNotifications;
 import io.joshatron.bgt.server.response.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -234,7 +234,7 @@ public class SocialUtils {
         socialDAO.sendMessage(user.getId(), otherId, sendMessage.getText(), RecipientType.PLAYER);
     }
 
-    public Message[] listMessages(Auth auth, String senders, Long startTime, Long endTime, String read, String from) throws GameServerException {
+    public UserMessage[] listMessages(Auth auth, String senders, Long startTime, Long endTime, String read, String from) throws GameServerException {
         Validator.validateAuth(auth);
         Date start = null;
         if(startTime != null) {
@@ -261,15 +261,15 @@ public class SocialUtils {
         }
         From frm = Validator.validateFrom(from);
 
-        List<UserMessage> messages = socialDAO.listMessages(user.getId(), users, start, end, rd, frm, RecipientType.PLAYER);
-        for(UserMessage message : messages) {
-            if(!message.getSender().equals(user.getId())) {
+        List<Message> messages = socialDAO.listMessages(user.getId(), users, start, end, rd, frm, RecipientType.PLAYER);
+        for(Message message : messages) {
+            if(!message.getSender().getId().equals(user.getId())) {
                 socialDAO.markMessageRead(message.getId());
                 message.setOpened(true);
             }
         }
 
-        return messages.parallelStream().map(Message::new).toArray(Message[]::new);
+        return messages.parallelStream().map(UserMessage::new).toArray(UserMessage[]::new);
     }
 
     public SocialNotifications getNotifications(Auth auth) throws GameServerException {

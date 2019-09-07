@@ -53,7 +53,7 @@ public class GameUtils {
         if(!ai && !accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!ai && !socialDAO.areFriends(user.getId().toString(), other)) {
+        if(!ai && !socialDAO.areFriends(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
         }
         if(!ai && gameDAO.playingGame(user.getId().toString(), other)) {
@@ -164,8 +164,8 @@ public class GameUtils {
                 for(int j = i + 1; j < requests.length; j++) {
                     if(requests[j] != null && requests[i].getSize() == requests[j].getSize() &&
                        !gameDAO.playingGame(requests[i].getRequester(), requests[j].getRequester()) &&
-                       !socialDAO.isBlocked(requests[i].getRequester(), requests[j].getRequester()) &&
-                       !socialDAO.isBlocked(requests[j].getRequester(), requests[i].getRequester())) {
+                       !socialDAO.isBlocked(UUID.fromString(requests[i].getRequester()), UUID.fromString(requests[j].getRequester())) &&
+                       !socialDAO.isBlocked(UUID.fromString(requests[j].getRequester()), UUID.fromString(requests[i].getRequester()))) {
                         gameDAO.startGame(requests[i].getRequester(), requests[j].getRequester(), requests[i].getSize(), Player.WHITE, Player.WHITE);
                         gameDAO.deleteRandomGameRequest(requests[i].getRequester());
                         gameDAO.deleteRandomGameRequest(requests[j].getRequester());
@@ -219,10 +219,10 @@ public class GameUtils {
         }
 
         GameInfo info = gameDAO.getGameInfo(gameId);
-        info.setMessages(socialDAO.listMessages(gameId, null, null, null, null, null, RecipientType.GAME));
-        for(Message message : info.getMessages()) {
+        info.setMessages(socialDAO.listMessages(UUID.fromString(gameId), null, null, null, null, null, RecipientType.GAME).parallelStream().map(UserMessage::new).toArray(UserMessage[]::new));
+        for(UserMessage message : info.getMessages()) {
             if(!message.getSender().equalsIgnoreCase(user.getId().toString())) {
-                socialDAO.markMessageRead(message.getId());
+                socialDAO.markMessageRead(UUID.fromString(message.getId()));
                 message.setOpened(true);
             }
         }
@@ -320,7 +320,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.GAME_IS_COMPLETE);
         }
 
-        socialDAO.sendMessage(user.getId().toString(), gameId, message.getText(), RecipientType.GAME);
+        socialDAO.sendMessage(user.getId(), UUID.fromString(gameId), message.getText(), RecipientType.GAME);
     }
 
     public String[] getPossibleTurns(Auth auth, String gameId) throws GameServerException {
