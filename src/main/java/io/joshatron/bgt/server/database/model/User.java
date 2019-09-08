@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import static javax.persistence.CascadeType.ALL;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -32,17 +31,23 @@ public class User {
     private State state;
     @Column(nullable = false)
     private Timestamp lastActivity;
-    @ManyToMany(cascade = ALL)
+    @ManyToMany
+    @JoinTable(name="FRIENDS",joinColumns=@JoinColumn(name="person"),inverseJoinColumns=@JoinColumn(name="friend"))
     private List<User> friends;
-    @ManyToMany(cascade = ALL,mappedBy = "friends")
-    private List<User> isFriend;
-    @ManyToMany(cascade = ALL)
+    @ManyToMany
+    @JoinTable(name="FRIENDS",joinColumns=@JoinColumn(name="friend"),inverseJoinColumns=@JoinColumn(name="person"))
+    private List<User> friended;
+    @ManyToMany
+    @JoinTable(name="BLOCKS",joinColumns=@JoinColumn(name="blocking"),inverseJoinColumns=@JoinColumn(name="blocked"))
     private List<User> blocking;
-    @ManyToMany(cascade = ALL,mappedBy = "blocking")
+    @ManyToMany
+    @JoinTable(name="BLOCKS",joinColumns=@JoinColumn(name="blocked"),inverseJoinColumns=@JoinColumn(name="blocking"))
     private List<User> blocked;
-    @ManyToMany(cascade = ALL)
+    @ManyToMany
+    @JoinTable(name="FRIEND_REQUESTS",joinColumns=@JoinColumn(name="outgoing"),inverseJoinColumns=@JoinColumn(name="incoming"))
     private List<User> outgoingFriendRequests;
-    @ManyToMany(mappedBy = "outgoingFriendRequests", cascade = ALL)
+    @ManyToMany
+    @JoinTable(name="FRIEND_REQUESTS",joinColumns=@JoinColumn(name="incoming"),inverseJoinColumns=@JoinColumn(name="outgoing"))
     private List<User> incomingFriendRequests;
 
     public User() {
@@ -55,6 +60,7 @@ public class User {
         lastActivity = new Timestamp(new Date().getTime());
         friends = new ArrayList<>();
         blocking = new ArrayList<>();
+        blocked = new ArrayList<>();
         outgoingFriendRequests = new ArrayList<>();
         incomingFriendRequests = new ArrayList<>();
     }
@@ -65,5 +71,21 @@ public class User {
 
     public void incrementFailed() {
         loginsFailed++;
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(id: ");
+        builder.append(id.toString());
+        builder.append(", username: ");
+        builder.append(username);
+        builder.append(", friends: ");
+        builder.append(friends.stream().map(User::getId).collect(Collectors.toList()));
+        builder.append(", outgoing requests: ");
+        builder.append(outgoingFriendRequests.stream().map(User::getId).collect(Collectors.toList()));
+        builder.append(", incoming requests: ");
+        builder.append(incomingFriendRequests.stream().map(User::getId).collect(Collectors.toList()));
+
+        return builder.toString();
     }
 }

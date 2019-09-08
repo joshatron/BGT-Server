@@ -30,7 +30,7 @@ public class SocialDAO {
 
     public boolean friendRequestExists(UUID requester, UUID other) throws GameServerException {
         try {
-            return accountDAO.getUserFromId(requester).getOutgoingFriendRequests().parallelStream().anyMatch(u -> u.getId().equals(other));
+            return accountDAO.getUserFromId(requester).getIncomingFriendRequests().parallelStream().anyMatch(u -> u.getId().equals(other));
         }
         catch(HibernateException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
@@ -39,7 +39,9 @@ public class SocialDAO {
 
     public boolean areFriends(UUID user1, UUID user2) throws GameServerException {
         try {
-            return accountDAO.getUserFromId(user1).getFriends().parallelStream().anyMatch(u -> u.getId().equals(user2));
+            User user = accountDAO.getUserFromId(user1);
+            return user.getFriends().parallelStream().anyMatch(u -> u.getId().equals(user2)) ||
+                   user.getFriended().parallelStream().anyMatch(u -> u.getId().equals(user2));
         }
         catch(HibernateException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
@@ -62,7 +64,6 @@ public class SocialDAO {
             User r = accountDAO.getUserFromId(requester);
             User o = accountDAO.getUserFromId(other);
             r.getOutgoingFriendRequests().add(o);
-            o.getIncomingFriendRequests().add(r);
             transaction.commit();
         }
         catch(HibernateException e) {
