@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Component
 public class SocialUtils {
@@ -197,7 +198,7 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
 
-        return user.getFriends().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
+        return Stream.concat(user.getFriends().stream(), user.getFriended().stream()).parallel().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public UserInfo[] listBlocked(Auth auth) throws GameServerException {

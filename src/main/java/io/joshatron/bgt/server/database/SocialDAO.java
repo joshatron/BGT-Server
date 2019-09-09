@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Component
 public class SocialDAO {
@@ -40,8 +41,7 @@ public class SocialDAO {
     public boolean areFriends(UUID user1, UUID user2) throws GameServerException {
         try {
             User user = accountDAO.getUserFromId(user1);
-            return user.getFriends().parallelStream().anyMatch(u -> u.getId().equals(user2)) ||
-                   user.getFriended().parallelStream().anyMatch(u -> u.getId().equals(user2));
+            return Stream.concat(user.getFriends().stream(), user.getFriended().stream()).parallel().anyMatch(u -> u.getId().equals(user2));
         }
         catch(HibernateException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
@@ -50,7 +50,7 @@ public class SocialDAO {
 
     public boolean isBlocked(UUID requester, UUID other) throws GameServerException {
         try {
-            return accountDAO.getUserFromId(other).getBlocking().parallelStream().anyMatch(u -> u.getId().equals(requester));
+            return accountDAO.getUserFromId(requester).getBlocked().parallelStream().anyMatch(u -> u.getId().equals(other));
         }
         catch(HibernateException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);

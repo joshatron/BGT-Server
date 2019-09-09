@@ -34,20 +34,17 @@ public class User {
     @ManyToMany
     @JoinTable(name="FRIENDS",joinColumns=@JoinColumn(name="person"),inverseJoinColumns=@JoinColumn(name="friend"))
     private List<User> friends;
-    @ManyToMany
-    @JoinTable(name="FRIENDS",joinColumns=@JoinColumn(name="friend"),inverseJoinColumns=@JoinColumn(name="person"))
+    @ManyToMany(mappedBy = "friends")
     private List<User> friended;
     @ManyToMany
-    @JoinTable(name="BLOCKS",joinColumns=@JoinColumn(name="blocking"),inverseJoinColumns=@JoinColumn(name="blocked"))
+    @JoinTable(name="BLOCKS",joinColumns=@JoinColumn(name="person"),inverseJoinColumns=@JoinColumn(name="blocked"))
     private List<User> blocking;
-    @ManyToMany
-    @JoinTable(name="BLOCKS",joinColumns=@JoinColumn(name="blocked"),inverseJoinColumns=@JoinColumn(name="blocking"))
+    @ManyToMany(mappedBy = "blocking")
     private List<User> blocked;
     @ManyToMany
-    @JoinTable(name="FRIEND_REQUESTS",joinColumns=@JoinColumn(name="outgoing"),inverseJoinColumns=@JoinColumn(name="incoming"))
+    @JoinTable(name="FRIEND_REQUESTS",joinColumns=@JoinColumn(name="person"),inverseJoinColumns=@JoinColumn(name="request"))
     private List<User> outgoingFriendRequests;
-    @ManyToMany
-    @JoinTable(name="FRIEND_REQUESTS",joinColumns=@JoinColumn(name="incoming"),inverseJoinColumns=@JoinColumn(name="outgoing"))
+    @ManyToMany(mappedBy = "outgoingFriendRequests")
     private List<User> incomingFriendRequests;
 
     public User() {
@@ -59,6 +56,7 @@ public class User {
         state = State.NORMAL;
         lastActivity = new Timestamp(new Date().getTime());
         friends = new ArrayList<>();
+        friended = new ArrayList<>();
         blocking = new ArrayList<>();
         blocked = new ArrayList<>();
         outgoingFriendRequests = new ArrayList<>();
