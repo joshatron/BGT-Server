@@ -187,8 +187,7 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-
-        return socialDAO.isBlocked(user.getId(), otherId);
+        return user.getBlocked().parallelStream().anyMatch(u -> u.getId().equals(otherId));
     }
 
     public UserInfo[] listFriends(Auth auth) throws GameServerException {
@@ -208,7 +207,7 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
 
-        return user.getFriends().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
+        return user.getBlocking().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public void sendMessage(Auth auth, String other, Text sendMessage) throws GameServerException {
