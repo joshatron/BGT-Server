@@ -53,7 +53,7 @@ public class GameUtils {
         if(!ai && !accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!ai && !socialDAO.areFriends(user.getId(), otherId)) {
+        if(!ai && !user.isFriend(otherId)) {
             throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
         }
         if(!ai && gameDAO.playingGame(user.getId().toString(), other)) {
@@ -163,9 +163,9 @@ public class GameUtils {
             if(requests[i] != null) {
                 for(int j = i + 1; j < requests.length; j++) {
                     if(requests[j] != null && requests[i].getSize() == requests[j].getSize() &&
-                       !gameDAO.playingGame(requests[i].getRequester(), requests[j].getRequester()) &&
-                       !socialDAO.isBlocked(UUID.fromString(requests[i].getRequester()), UUID.fromString(requests[j].getRequester())) &&
-                       !socialDAO.isBlocked(UUID.fromString(requests[j].getRequester()), UUID.fromString(requests[i].getRequester()))) {
+                       !gameDAO.playingGame(requests[i].getRequester(), requests[j].getRequester())) {
+                       //!socialDAO.isBlocked(UUID.fromString(requests[i].getRequester()), UUID.fromString(requests[j].getRequester())) &&
+                       //!socialDAO.isBlocked(UUID.fromString(requests[j].getRequester()), UUID.fromString(requests[i].getRequester()))) {
                         gameDAO.startGame(requests[i].getRequester(), requests[j].getRequester(), requests[i].getSize(), Player.WHITE, Player.WHITE);
                         gameDAO.deleteRandomGameRequest(requests[i].getRequester());
                         gameDAO.deleteRandomGameRequest(requests[j].getRequester());

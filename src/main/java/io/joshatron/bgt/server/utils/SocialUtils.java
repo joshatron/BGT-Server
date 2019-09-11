@@ -36,16 +36,19 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(socialDAO.isBlocked(user.getId(), otherId)) {
+        if(user.isBlocked(otherId)) {
             throw new GameServerException(ErrorCode.BLOCKED);
         }
-        if(socialDAO.isBlocked(otherId, user.getId())) {
+        if(user.isBlocking(otherId)) {
             throw new GameServerException(ErrorCode.BLOCKING);
         }
-        if(socialDAO.friendRequestExists(user.getId(), otherId)) {
+        if(user.isRequestingUser(otherId)) {
             throw new GameServerException(ErrorCode.ALREADY_REQUESTING);
         }
-        if(socialDAO.areFriends(user.getId(), otherId)) {
+        if(user.isRequestedByUser(otherId)) {
+            throw new GameServerException(ErrorCode.ALREADY_BEING_REQUESTED);
+        }
+        if(user.isFriend(otherId)) {
             throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
         }
         if(user.getId().equals(otherId)) {
@@ -65,7 +68,7 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.friendRequestExists(user.getId(), otherId)) {
+        if(!user.isRequestingUser(otherId)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
@@ -84,7 +87,7 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.friendRequestExists(user.getId(), otherId)) {
+        if(!user.isRequestedByUser(otherId)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
@@ -124,7 +127,7 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.areFriends(user.getId(), otherId)) {
+        if(!user.isFriend(otherId)) {
             throw new GameServerException(ErrorCode.FRIEND_NOT_FOUND);
         }
 
@@ -141,21 +144,21 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(socialDAO.isBlocked(otherId, user.getId())) {
-            throw new GameServerException(ErrorCode.ALREADY_BLOCKED);
+        if(user.isBlocking(otherId)) {
+            throw new GameServerException(ErrorCode.ALREADY_BLOCKING);
         }
         if(user.getId().equals(otherId)) {
             throw new GameServerException(ErrorCode.BLOCKING_SELF);
         }
 
         socialDAO.block(user.getId(), otherId);
-        if(socialDAO.areFriends(user.getId(), otherId)) {
+        if(user.isFriend(otherId)) {
             socialDAO.unfriend(user.getId(), otherId);
         }
-        if(socialDAO.friendRequestExists(user.getId(), otherId)) {
+        if(user.isRequestingUser(otherId)) {
             socialDAO.deleteFriendRequest(user.getId(), otherId);
         }
-        if(socialDAO.friendRequestExists(otherId, user.getId())) {
+        if(user.isRequestedByUser(otherId)) {
             socialDAO.deleteFriendRequest(otherId, user.getId());
         }
     }
@@ -170,8 +173,8 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!socialDAO.isBlocked(otherId, user.getId())) {
-            throw new GameServerException(ErrorCode.NOT_BLOCKED);
+        if(!user.isBlocking(otherId)) {
+            throw new GameServerException(ErrorCode.NOT_BLOCKING);
         }
 
         socialDAO.unblock(user.getId(), otherId);
@@ -221,7 +224,7 @@ public class SocialUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(socialDAO.isBlocked(user.getId(), otherId)) {
+        if(user.isBlocked(otherId)) {
             throw new GameServerException(ErrorCode.BLOCKED);
         }
         if(sendMessage.getText().length() == 0) {

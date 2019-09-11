@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Data
@@ -71,19 +72,39 @@ public class User {
         loginsFailed++;
     }
 
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("(id: ");
-        builder.append(id.toString());
-        builder.append(", username: ");
-        builder.append(username);
-        builder.append(", friends: ");
-        builder.append(friends.stream().map(User::getId).collect(Collectors.toList()));
-        builder.append(", outgoing requests: ");
-        builder.append(outgoingFriendRequests.stream().map(User::getId).collect(Collectors.toList()));
-        builder.append(", incoming requests: ");
-        builder.append(incomingFriendRequests.stream().map(User::getId).collect(Collectors.toList()));
+    public boolean isRequestedByUser(UUID other) {
+        return incomingFriendRequests.parallelStream().anyMatch(u -> u.getId().equals(other));
+    }
 
-        return builder.toString();
+    public boolean isRequestingUser(UUID other) {
+        return outgoingFriendRequests.parallelStream().anyMatch(u -> u.getId().equals(other));
+    }
+
+    public boolean isFriend(UUID other) {
+        return getAllFriends().parallelStream().anyMatch(u -> u.getId().equals(other));
+    }
+
+    public boolean isBlocking(UUID other) {
+        return blocking.parallelStream().anyMatch(u -> u.getId().equals(other));
+    }
+
+    public boolean isBlocked(UUID other) {
+        return blocked.parallelStream().anyMatch(u -> u.getId().equals(other));
+    }
+
+    public List<User> getAllFriends() {
+        return Stream.concat(friends.stream(), friended.stream()).collect(Collectors.toList());
+    }
+
+    public String toString() {
+
+        return  "(id: " + id.toString() +
+                ", username: " + username +
+                ", friends: " + getAllFriends().parallelStream().map(User::getId).collect(Collectors.toList()) +
+                ", blocking: " + blocking.parallelStream().map(User::getId).collect(Collectors.toList()) +
+                ", blocked: " + blocked.parallelStream().map(User::getId).collect(Collectors.toList()) +
+                ", outgoing requests: " + outgoingFriendRequests.parallelStream().map(User::getId).collect(Collectors.toList()) +
+                ", incoming requests: " + incomingFriendRequests.parallelStream().map(User::getId).collect(Collectors.toList()) +
+                ")";
     }
 }
