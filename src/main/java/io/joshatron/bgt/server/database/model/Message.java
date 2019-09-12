@@ -2,15 +2,14 @@ package io.joshatron.bgt.server.database.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Message {
     @Id
@@ -26,4 +25,13 @@ public class Message {
     private Timestamp sent;
     @Column(nullable = false)
     private boolean opened;
+
+    public Message() {
+        this.id = null;
+        this.sender = null;
+        this.recipient = null;
+        this.body = "";
+        this.sent = new Timestamp(new Date().getTime());
+        this.opened = false;
+    }
 }

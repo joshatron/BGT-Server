@@ -15,6 +15,11 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,7 +88,16 @@ public class SocialDAO {
     }
 
     public void sendMessage(UUID requester, UUID other, String text, RecipientType recipientType) throws GameServerException {
-
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        User r = accountDAO.getUserFromId(requester);
+        User o = accountDAO.getUserFromId(other);
+        Message message = new Message();
+        message.setSender(r);
+        message.setRecipient(o);
+        message.setBody(text);
+        session.save(message);
+        transaction.commit();
     }
 
     public void markMessageRead(UUID id) throws GameServerException {
@@ -104,7 +118,16 @@ public class SocialDAO {
     }
 
     public List<Message> listMessages(UUID userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
-        return new ArrayList<>();
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Message> criteria = builder.createQuery(Message.class);
+
+        Metamodel m = session.getMetamodel();
+        EntityType<Message> message = m.entity(Message.class);
+        Root<Message> root = criteria.from(message);
+        criteria.select(root);
+
+        return session.createQuery(criteria).getResultList();
     }
 
     public SocialNotifications getSocialNotifications(UUID userId) throws GameServerException {
