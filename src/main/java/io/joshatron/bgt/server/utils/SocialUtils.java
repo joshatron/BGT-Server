@@ -13,6 +13,7 @@ import io.joshatron.bgt.server.response.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -239,13 +240,13 @@ public class SocialUtils {
 
     public UserMessage[] listMessages(Auth auth, String senders, Long startTime, Long endTime, String read, String from) throws GameServerException {
         Validator.validateAuth(auth);
-        Date start = null;
+        Timestamp start = null;
         if(startTime != null) {
-            start = new Date(startTime);
+            start = new Timestamp(startTime);
         }
-        Date end = null;
+        Timestamp end = null;
         if(endTime != null) {
-            end = new Date(endTime);
+            end = new Timestamp(endTime);
         }
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);

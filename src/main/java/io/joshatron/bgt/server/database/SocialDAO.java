@@ -17,9 +17,11 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,15 +119,40 @@ public class SocialDAO {
         transaction.commit();
     }
 
-    public List<Message> listMessages(UUID userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
+    public List<Message> listMessages(UUID userId, String[] users, Timestamp start, Timestamp end, Read read, From from, RecipientType recipient) throws GameServerException {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Message> criteria = builder.createQuery(Message.class);
+        Root<Message> root = criteria.from(Message.class);
 
-        Metamodel m = session.getMetamodel();
-        EntityType<Message> message = m.entity(Message.class);
-        Root<Message> root = criteria.from(message);
-        criteria.select(root);
+        List<Predicate> predicates = new ArrayList<>();
+        if(start != null) {
+            predicates.add(builder.greaterThanOrEqualTo(root.get("sent"), start));
+        }
+        if(end != null) {
+            predicates.add(builder.greaterThanOrEqualTo(root.get("sent"), end));
+        }
+        switch(read) {
+            case READ:
+                predicates.add(builder.equal(root.get("opened"), true));
+                break;
+            case NOT_READ:
+                predicates.add(builder.equal(root.get("opened"), false));
+                break;
+        }
+        switch(from) {
+            case ME:
+                predicates.add(builder.equal(root.get("sender"), userId));
+                break;
+            case THEM:
+                predicates.add(builder.equal(root.get("recipient"), userId));
+                break;
+            case BOTH:
+                predicates.add(builder.or(builder.equal(root.get("sender"), userId), builder.equal(root.get("recipient"), userId)));
+                break;
+        }
+
+        criteria.select(root).where(predicates.toArray(new Predicate[0]));
 
         return session.createQuery(criteria).getResultList();
     }
