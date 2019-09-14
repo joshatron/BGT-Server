@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserMessage {
+public class MessageInfo {
     private String sender;
     private String recipient;
     private long timestamp;
@@ -14,7 +14,7 @@ public class UserMessage {
     private String id;
     private boolean opened;
 
-    public UserMessage(Message message) {
+    public MessageInfo(Message message) {
         this.sender = message.getSender().getId().toString();
         this.recipient = message.getRecipient().getId().toString();
         this.timestamp = message.getSent().getTime();

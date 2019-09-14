@@ -2,7 +2,7 @@ package io.joshatron.bgt.server.controllers;
 
 import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.request.Text;
-import io.joshatron.bgt.server.response.UserMessage;
+import io.joshatron.bgt.server.response.MessageInfo;
 import io.joshatron.bgt.server.response.SocialNotifications;
 import io.joshatron.bgt.server.response.UserInfo;
 import io.joshatron.bgt.server.utils.SocialUtils;
@@ -179,7 +179,7 @@ public class SocialController {
                                        @RequestParam(value = "read", required = false) String read, @RequestParam(value = "from", required = false) String from) {
         try {
             logger.info("Reading messages");
-            UserMessage[] messages = socialUtils.listMessages(new Auth(auth), senders, start, end, read, from);
+            MessageInfo[] messages = socialUtils.listMessages(new Auth(auth), senders, start, end, read, from);
             logger.info("Messages found, returning");
             return new ResponseEntity<>(messages, HttpStatus.OK);
         } catch (Exception e) {

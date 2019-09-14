@@ -41,7 +41,7 @@ public class AiUtils {
             Turn turn = player.getTurn(state);
             state.executeTurn(turn);
 
-            gameDAO.addTurn(gameId, turn.toString());
+            gameDAO.updateState(gameId, turn.toString());
             GameResult result = state.checkForWinner();
             if(result.isFinished()) {
                 gameDAO.finishGame(gameId, result.getWinner());

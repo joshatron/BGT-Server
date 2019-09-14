@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Component
-public class GameDAOSqlite implements GameDAO {
+public class GameDAOSqlite {
 
     @Autowired
     private Connection conn;
 
-    @Override
+
     public void createGameRequest(String requester, String other, int size, Player requesterColor, Player first) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -47,7 +47,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public void deleteGameRequest(String requester, String other) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -66,7 +66,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public void createRandomGameRequest(String user, int size) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -85,7 +85,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public void deleteRandomGameRequest(String user) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -103,7 +103,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public void startGame(String requester, String other, int size, Player requesterColor, Player first) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -138,7 +138,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public void addTurn(String gameId, String text) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -170,7 +170,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public void finishGame(String gameId, Player winner) throws GameServerException {
         PreparedStatement stmt = null;
 
@@ -191,7 +191,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public boolean playingGame(String user, String other) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -221,7 +221,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public boolean gameRequestExists(String requester, String other) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -245,7 +245,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public boolean randomGameRequestExists(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -268,7 +268,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public boolean gameExists(String gameId) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -291,7 +291,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public boolean userAuthorizedForGame(String user, String gameId) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -314,7 +314,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public boolean isYourTurn(String user, String gameId) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -343,7 +343,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public RequestInfo getGameRequestInfo(String requester, String other) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -373,7 +373,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public RequestInfo[] getIncomingGameRequests(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -403,7 +403,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public RequestInfo[] getOutgoingGameRequests(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -433,7 +433,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public int getOutgoingRandomRequestSize(String user) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -460,7 +460,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public RandomRequestInfo[] getRandomGameRequests() throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -486,7 +486,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public GameInfo getGameInfo(String gameId) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -547,7 +547,7 @@ public class GameDAOSqlite implements GameDAO {
         }
     }
 
-    @Override
+
     public GameInfo[] listGames(String userId, String[] opponents, Date start, Date end, Complete complete, Pending pending, int[] sizes, Winner winner, Player color) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -716,7 +716,7 @@ public class GameDAOSqlite implements GameDAO {
         return getGames.toString();
     }
 
-    @Override
+
     public GameNotifications getGameNotifications(String userId) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;

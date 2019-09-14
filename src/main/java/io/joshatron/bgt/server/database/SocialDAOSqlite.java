@@ -5,10 +5,7 @@ import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.From;
 import io.joshatron.bgt.server.request.Read;
 import io.joshatron.bgt.server.request.RecipientType;
-import io.joshatron.bgt.server.response.UserMessage;
-import io.joshatron.bgt.server.response.SocialNotifications;
-import io.joshatron.bgt.server.response.State;
-import io.joshatron.bgt.server.response.UserInfo;
+import io.joshatron.bgt.server.response.MessageInfo;
 import io.joshatron.bgt.server.utils.IdUtils;
 import org.springframework.stereotype.Component;
 
@@ -48,12 +45,12 @@ public class SocialDAOSqlite {
     }
 
 
-    public UserMessage[] listMessages(String userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
+    public MessageInfo[] listMessages(String userId, String[] users, Date start, Date end, Read read, From from, RecipientType recipient) throws GameServerException {
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            ArrayList<UserMessage> messages = new ArrayList<>();
+            ArrayList<MessageInfo> messages = new ArrayList<>();
 
             stmt = conn.prepareStatement(generateMessageQuery(users, start, end, read, from, recipient));
             int i = 1;
@@ -83,11 +80,11 @@ public class SocialDAOSqlite {
             rs = stmt.executeQuery();
 
             while(rs.next()) {
-                messages.add(new UserMessage(rs.getString("sender"), rs.getString("recipient"), rs.getLong("time"),
+                messages.add(new MessageInfo(rs.getString("sender"), rs.getString("recipient"), rs.getLong("time"),
                         rs.getString("message"), rs.getString("id"), (rs.getInt("opened") != 0)));
             }
 
-            return messages.toArray(new UserMessage[0]);
+            return messages.toArray(new MessageInfo[0]);
         } catch(SQLException e) {
             e.printStackTrace();
             throw new GameServerException(ErrorCode.DATABASE_ERROR);

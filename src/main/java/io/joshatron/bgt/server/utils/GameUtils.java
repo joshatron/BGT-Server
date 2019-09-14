@@ -219,8 +219,8 @@ public class GameUtils {
         }
 
         GameInfo info = gameDAO.getGameInfo(gameId);
-        info.setMessages(socialDAO.listMessages(UUID.fromString(gameId), null, null, null, null, null, RecipientType.GAME).parallelStream().map(UserMessage::new).toArray(UserMessage[]::new));
-        for(UserMessage message : info.getMessages()) {
+        info.setMessages(socialDAO.listMessages(UUID.fromString(gameId), null, null, null, null, null, RecipientType.GAME).parallelStream().map(MessageInfo::new).toArray(MessageInfo[]::new));
+        for(MessageInfo message : info.getMessages()) {
             if(!message.getSender().equalsIgnoreCase(user.getId().toString())) {
                 socialDAO.markMessageRead(UUID.fromString(message.getId()));
                 message.setOpened(true);
@@ -392,7 +392,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.ILLEGAL_MOVE);
         }
 
-        gameDAO.addTurn(gameId, turn.getText());
+        gameDAO.updateState(gameId, turn.getText());
 
         GameInfo info = gameDAO.getGameInfo(gameId);
         GameResult result = state.checkForWinner();

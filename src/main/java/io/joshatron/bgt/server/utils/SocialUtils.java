@@ -7,7 +7,7 @@ import io.joshatron.bgt.server.database.AccountDAO;
 import io.joshatron.bgt.server.database.SocialDAO;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
-import io.joshatron.bgt.server.response.UserMessage;
+import io.joshatron.bgt.server.response.MessageInfo;
 import io.joshatron.bgt.server.response.SocialNotifications;
 import io.joshatron.bgt.server.response.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -239,7 +238,7 @@ public class SocialUtils {
         socialDAO.sendMessage(user.getId(), otherId, sendMessage.getText(), RecipientType.PLAYER);
     }
 
-    public UserMessage[] listMessages(Auth auth, String senders, Long startTime, Long endTime, String read, String from) throws GameServerException {
+    public MessageInfo[] listMessages(Auth auth, String senders, Long startTime, Long endTime, String read, String from) throws GameServerException {
         Validator.validateAuth(auth);
         Timestamp start = null;
         if(startTime != null) {
@@ -273,7 +272,7 @@ public class SocialUtils {
             }
         }
 
-        return messages.parallelStream().map(UserMessage::new).toArray(UserMessage[]::new);
+        return messages.parallelStream().map(MessageInfo::new).toArray(MessageInfo[]::new);
     }
 
     public SocialNotifications getNotifications(Auth auth) throws GameServerException {

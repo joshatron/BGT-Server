@@ -21,5 +21,5 @@ public class GameInfo {
     private boolean done;
     private String[] turns;
     private GameState fullState;
-    private UserMessage[] messages;
+    private MessageInfo[] messages;
 }
