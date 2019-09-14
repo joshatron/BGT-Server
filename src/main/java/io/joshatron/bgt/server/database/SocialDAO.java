@@ -119,7 +119,7 @@ public class SocialDAO {
         transaction.commit();
     }
 
-    public List<Message> listMessages(UUID userId, String[] users, Timestamp start, Timestamp end, Read read, From from, RecipientType recipient) throws GameServerException {
+    public List<Message> listMessages(UUID userId, List<UUID> users, Timestamp start, Timestamp end, Read read, From from, RecipientType recipient) throws GameServerException {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Message> criteria = builder.createQuery(Message.class);
@@ -130,7 +130,7 @@ public class SocialDAO {
             predicates.add(builder.greaterThanOrEqualTo(root.get("sent"), start));
         }
         if(end != null) {
-            predicates.add(builder.greaterThanOrEqualTo(root.get("sent"), end));
+            predicates.add(builder.lessThanOrEqualTo(root.get("sent"), end));
         }
         switch(read) {
             case READ:
@@ -142,19 +142,39 @@ public class SocialDAO {
         }
         switch(from) {
             case ME:
-                predicates.add(builder.equal(root.get("sender"), userId));
+                predicates.add(builder.equal(root.get("sender").get("id"), userId));
+                if(users != null && !users.isEmpty()) {
+                    predicates.add(getPredicateForUsers(users, builder, root, "recipient"));
+                }
                 break;
             case THEM:
-                predicates.add(builder.equal(root.get("recipient"), userId));
+                predicates.add(builder.equal(root.get("recipient").get("id"), userId));
+                if(users != null && !users.isEmpty()) {
+                    predicates.add(getPredicateForUsers(users, builder, root, "sender"));
+                }
                 break;
-            case BOTH:
-                predicates.add(builder.or(builder.equal(root.get("sender"), userId), builder.equal(root.get("recipient"), userId)));
+            default:
+                predicates.add(builder.or(builder.equal(root.get("sender").get("id"), userId),
+                                          builder.equal(root.get("recipient").get("id"), userId)));
+                if(users != null && !users.isEmpty()) {
+                    predicates.add(builder.or(getPredicateForUsers(users, builder, root, "sender"),
+                                              getPredicateForUsers(users, builder, root, "recipient")));
+                }
                 break;
         }
 
         criteria.select(root).where(predicates.toArray(new Predicate[0]));
 
         return session.createQuery(criteria).getResultList();
+    }
+
+    private Predicate getPredicateForUsers(List<UUID> users, CriteriaBuilder builder, Root root, String spot) {
+        Predicate predicate = builder.equal(root.get(spot).get("id"), users.get(0));
+        for(int i = 1; i < users.size(); i++) {
+            predicate = builder.or(predicate, builder.equal(root.get(spot).get("id"), users.get(i)));
+        }
+
+        return predicate;
     }
 
     public SocialNotifications getSocialNotifications(UUID userId) throws GameServerException {

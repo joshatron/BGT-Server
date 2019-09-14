@@ -1121,7 +1121,7 @@ public class SocialTest extends BaseTest {
         JSONArray user1Messages = SocialUtils.searchAllMessages(user1, client, HttpStatus.SC_OK, 3);
         for(int i = 0; i < user1Messages.length(); i++) {
             JSONObject message = user1Messages.getJSONObject(i);
-            if(message.getString("message").equalsIgnoreCase("from user 2")) {
+            if(message.getString("body").equalsIgnoreCase("from user 2")) {
                 Assert.assertTrue(message.getBoolean("opened"));
             }
             else {

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -253,11 +254,10 @@ public class SocialUtils {
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
         Read rd = Validator.validateRead(read);
-        String[] users = null;
+        List<UUID> users = new ArrayList<>();
         if(senders != null && senders.length() > 0) {
-            users = senders.split(",");
-            for (String u : users) {
-                Validator.validateId(u);
+            for (String u : senders.split(",")) {
+                users.add(Validator.validateId(u));
             }
         }
         if(start != null && end != null && start.after(end)) {
