@@ -44,7 +44,7 @@ public class GameUtils {
             otherId = Validator.validateId(other);
         }
         Validator.validateGameBoardSize(gameRequest.getSize());
-        Player requesterColor = Validator.validatePlayer(gameRequest.getRequesterColor());
+        Player requesterColor = Validator.validatePlayer(gameRequest.getPlayerIndicator());
         Player first = Validator.validatePlayer(gameRequest.getFirst());
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -81,9 +81,9 @@ public class GameUtils {
         }
     }
 
-    public void deleteRequest(Auth auth, String other) throws GameServerException {
+    public void deleteRequest(Auth auth, String request) throws GameServerException {
         Validator.validateAuth(auth);
-        UUID otherId = Validator.validateId(other);
+        UUID otherId = Validator.validateId(request);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -91,18 +91,17 @@ public class GameUtils {
         if(!accountDAO.userExists(otherId)) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-        if(!gameDAO.gameRequestExists(user.getId().toString(), other)) {
+        if(!gameDAO.gameRequestExists(user.getId().toString(), request)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        gameDAO.deleteGameRequest(user.getId().toString(), other);
+        gameDAO.deleteGameRequest(user.getId().toString(), request);
     }
 
-    public void respondToGame(Auth auth, String id, Text answer) throws GameServerException {
+    public void respondToGame(Auth auth, String id, GameRequestAnswer answer) throws GameServerException {
         Validator.validateAuth(auth);
         UUID uuid = Validator.validateId(id);
-        Validator.validateText(answer);
-        Answer response = Validator.validateAnswer(answer.getText());
+        Answer response = Validator.validateAnswer(answer.getAnswer());
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }

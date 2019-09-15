@@ -1,13 +1,13 @@
 package io.joshatron.bgt.server.request;
 
+import io.joshatron.bgt.engine.state.GameParameters;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
 public class GameRequest {
-    private int size;
-    private String requesterColor;
-    private String first;
+    private String playerIndicator;
     private String[] opponents;
+    private GameParameters parameters;
 }
