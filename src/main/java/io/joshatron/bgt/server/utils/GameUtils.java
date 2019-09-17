@@ -43,9 +43,7 @@ public class GameUtils {
         if(!ai) {
             otherId = Validator.validateId(other);
         }
-        Validator.validateGameBoardSize(gameRequest.getSize());
         Player requesterColor = Validator.validatePlayer(gameRequest.getPlayerIndicator());
-        Player first = Validator.validatePlayer(gameRequest.getFirst());
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -56,7 +54,7 @@ public class GameUtils {
         if(!ai && !user.isFriend(otherId)) {
             throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
         }
-        if(!ai && gameDAO.playingGame(user.getId().toString(), other)) {
+        if(!ai && gameDAO.playingGame(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.GAME_EXISTS);
         }
         if(!ai && gameDAO.gameRequestExists(user.getId().toString(), other)) {
@@ -140,9 +138,8 @@ public class GameUtils {
         return gameDAO.getOutgoingGameRequests(user.getId().toString());
     }
 
-    public void requestRandomGame(Auth auth, int size) throws GameServerException {
+    public void requestRandomGame(Auth auth) throws GameServerException {
         Validator.validateAuth(auth);
-        Validator.validateGameBoardSize(size);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -151,7 +148,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.GAME_REQUEST_EXISTS);
         }
 
-        gameDAO.createRandomGameRequest(user.getId().toString(), size);
+        gameDAO.createRandomGameRequest(user.getId());
         resolveRandomGameRequests();
     }
 
@@ -189,7 +186,7 @@ public class GameUtils {
         gameDAO.deleteRandomGameRequest(user.getId().toString());
     }
 
-    public int checkRandomSize(Auth auth) throws GameServerException {
+    public boolean randomRequestExists(Auth auth) throws GameServerException {
         Validator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -199,7 +196,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        return gameDAO.getOutgoingRandomRequestSize(user.getId().toString());
+        return false;
     }
 
     public GameInfo getGameInfo(Auth auth, String gameId, Boolean fullState) throws GameServerException {
@@ -245,7 +242,7 @@ public class GameUtils {
         }
     }
 
-    public GameInfo[] findGames(Auth auth, String opponents, Long startTime, Long endTime, String complete, String pending, String sizes, String winner, String color) throws GameServerException {
+    public GameInfo[] findGames(Auth auth, String opponents, Long startTime, Long endTime, String complete, String pending) throws GameServerException {
         Validator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -284,18 +281,6 @@ public class GameUtils {
         }
         Complete cpt = Validator.validateComplete(complete);
         Pending pnd = Validator.validatePending(pending);
-        int[] szs = null;
-        if(sizes != null && sizes.length() > 0) {
-            String[] all = sizes.split(",");
-            szs = new int[all.length];
-            for(int i = 0; i < all.length; i++) {
-                int size = Integer.parseInt(all[i]);
-                Validator.validateGameBoardSize(size);
-                szs[i] = size;
-            }
-        }
-        Winner wnr = Validator.validateWinner(winner);
-        Player clr = Validator.validatePlayer(color);
 
         return gameDAO.listGames(user.getId().toString(), users, start, end, cpt, pnd, szs, wnr, clr);
     }

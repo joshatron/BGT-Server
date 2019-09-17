@@ -16,7 +16,7 @@ public class AdminController {
 
     @Autowired
     private AdminUtils adminUtils;
-    private Logger logger = LoggerFactory.getLogger(AccountController.class);
+    private Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @PostMapping(value = "/initialize")
     public ResponseEntity initialize() {

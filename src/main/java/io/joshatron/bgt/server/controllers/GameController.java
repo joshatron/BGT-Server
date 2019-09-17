@@ -21,7 +21,7 @@ public class GameController {
 
     @Autowired
     private GameUtils gameUtils;
-    private Logger logger = LoggerFactory.getLogger(AccountController.class);
+    private Logger logger = LoggerFactory.getLogger(GameController.class);
 
     @PostMapping(value = "/request/create", produces = "application/json")
     public ResponseEntity requestGame(@RequestHeader(value="Authorization") String auth, @RequestBody GameRequest gameRequest) {
@@ -111,9 +111,14 @@ public class GameController {
     public ResponseEntity getOutgoingRandomRequests(@RequestHeader(value="Authorization") String auth) {
         try {
             logger.info("Getting outgoing random request sizes");
-            int size = gameUtils.checkRandomSize(new Auth(auth));
-            logger.info("Outing random games found");
-            return new ResponseEntity<>(size, HttpStatus.OK);
+            if(gameUtils.randomRequestExists(new Auth(auth))) {
+                logger.info("Random request found");
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            else {
+                logger.info("Random request not found");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             return ControllerUtils.handleExceptions(e, logger);
         }
@@ -122,12 +127,10 @@ public class GameController {
     @GetMapping(value = "/search", produces = "application/json")
     public ResponseEntity findGames(@RequestHeader(value="Authorization") String auth, @RequestParam(value = "opponents", required = false) String opponents,
                                     @RequestParam(value = "start", required = false) Long start, @RequestParam(value = "end", required = false) Long end,
-                                    @RequestParam(value = "complete", required = false) String complete, @RequestParam(value = "pending", required = false) String pending,
-                                    @RequestParam(value = "sizes", required = false) String sizes, @RequestParam(value = "winner", required = false) String winner,
-                                    @RequestParam(value = "color", required = false) String color) {
+                                    @RequestParam(value = "complete", required = false) String complete, @RequestParam(value = "pending", required = false) String pending) {
         try {
             logger.info("Searching for games");
-            GameInfo[] games = gameUtils.findGames(new Auth(auth), opponents, start, end, complete, pending, sizes, winner, color);
+            GameInfo[] games = gameUtils.findGames(new Auth(auth), opponents, start, end, complete, pending);
             logger.info("Games found");
             return new ResponseEntity(games, HttpStatus.OK);
         } catch (Exception e) {
