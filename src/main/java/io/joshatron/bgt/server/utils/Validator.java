@@ -189,15 +189,15 @@ public class Validator {
     }
 
     public static void validateGameRequest(GameRequest gameRequest) throws GameServerException {
-        validateGameBoardSize(gameRequest.getSize());
+        //validateGameBoardSize(gameRequest.getSize());
 
-        if(!gameRequest.getFirst().equalsIgnoreCase("white") && !gameRequest.getFirst().equalsIgnoreCase("black")) {
-            throw new GameServerException(ErrorCode.ILLEGAL_COLOR);
-        }
+//        if(!gameRequest.getFirst().equalsIgnoreCase("white") && !gameRequest.getFirst().equalsIgnoreCase("black")) {
+//            throw new GameServerException(ErrorCode.ILLEGAL_COLOR);
+//        }
 
-        if(!gameRequest.getFirst().equalsIgnoreCase("white") && !gameRequest.getFirst().equalsIgnoreCase("black")) {
-            throw new GameServerException(ErrorCode.ILLEGAL_COLOR);
-        }
+//        if(!gameRequest.getFirst().equalsIgnoreCase("white") && !gameRequest.getFirst().equalsIgnoreCase("black")) {
+//            throw new GameServerException(ErrorCode.ILLEGAL_COLOR);
+//        }
     }
 
     public static void validateGameBoardSize(int size) throws GameServerException {

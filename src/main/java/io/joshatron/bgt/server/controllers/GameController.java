@@ -107,7 +107,7 @@ public class GameController {
         }
     }
 
-    @GetMapping(value = "/request/random/outgoing", produces = "application/json")
+    @GetMapping(value = "/request/random/exists", produces = "application/json")
     public ResponseEntity getOutgoingRandomRequests(@RequestHeader(value="Authorization") String auth) {
         try {
             logger.info("Getting outgoing random request sizes");
@@ -132,7 +132,7 @@ public class GameController {
             logger.info("Searching for games");
             GameInfo[] games = gameUtils.findGames(new Auth(auth), opponents, start, end, complete, pending);
             logger.info("Games found");
-            return new ResponseEntity(games, HttpStatus.OK);
+            return new ResponseEntity<>(games, HttpStatus.OK);
         } catch (Exception e) {
             return ControllerUtils.handleExceptions(e, logger);
         }
@@ -193,7 +193,7 @@ public class GameController {
             logger.info("Getting game notifications");
             GameNotifications gameNotifications = gameUtils.getNotifications(new Auth(auth));
             logger.info("Game notifications found");
-            return new ResponseEntity(gameNotifications, HttpStatus.OK);
+            return new ResponseEntity<>(gameNotifications, HttpStatus.OK);
         } catch (Exception e) {
             return ControllerUtils.handleExceptions(e, logger);
         }

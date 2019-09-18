@@ -94,7 +94,7 @@ public class GameDAO {
         return null;
     }
 
-    public GameInfo[] listGames(String userId, String[] opponents, Date start, Date end, Complete complete, Pending pending, int[] sizes, Winner winner, Player color) throws GameServerException {
+    public GameInfo[] listGames(String userId, String[] opponents, Date start, Date end, Complete complete, Pending pending) throws GameServerException {
         return null;
     }
 

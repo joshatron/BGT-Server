@@ -7,6 +7,7 @@ import io.joshatron.bgt.server.database.AdminDAO;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.response.State;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class AdminUtils {
     @Autowired
     private AccountDAO accountDAO;
 
-    @Value("${admin.initial-password}")
+    @Value("${admin.initial-password:}")
     private String initialPassword;
 
     public String initializeAccount() throws GameServerException {
@@ -29,7 +30,7 @@ public class AdminUtils {
             throw new GameServerException(ErrorCode.ADMIN_PASSWORD_INITIALIZED);
         }
 
-        String pass = initialPassword != null && !initialPassword.isEmpty() ? initialPassword : IdUtils.generateId();
+        String pass = initialPassword != null && !initialPassword.isEmpty() ? initialPassword : RandomStringUtils.randomAlphanumeric(30);
 
         adminDAO.updatePassword(pass);
 
@@ -63,7 +64,7 @@ public class AdminUtils {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
 
-        String newPass = IdUtils.generateId();
+        String newPass = RandomStringUtils.randomAlphanumeric(30);
         accountDAO.updatePassword(userId, newPass);
 
         return newPass;

@@ -62,20 +62,20 @@ public class GameUtils {
         }
 
         if(ai) {
-            gameDAO.startGame(user.getId().toString(), other.toUpperCase(), gameRequest.getSize(), requesterColor, first);
-            if(requesterColor != first) {
-                GameInfo[] games = gameDAO.listGames(user.getId().toString(), new String[]{other.toUpperCase()}, null, null, Complete.INCOMPLETE, null, new int[]{gameRequest.getSize()}, null, requesterColor);
-                if(games.length == 1) {
-                    try {
-                        AiUtils.playTurn(new GameState(first, gameRequest.getSize(), true), games[0].getGameId(), gameDAO);
-                    } catch(TakEngineException e) {
-                        throw new GameServerException(ErrorCode.GAME_ENGINE_ERROR);
-                    }
-                }
-            }
+//            gameDAO.startGame(user.getId().toString(), other.toUpperCase(), gameRequest.getSize(), requesterColor, first);
+//            if(requesterColor != first) {
+//                GameInfo[] games = gameDAO.listGames(user.getId().toString(), new String[]{other.toUpperCase()}, null, null, Complete.INCOMPLETE, null, new int[]{gameRequest.getSize()}, null, requesterColor);
+//                if(games.length == 1) {
+//                    try {
+//                        //AiUtils.playTurn(new GameState(first, gameRequest.getSize(), true), games[0].getGameId(), gameDAO);
+//                    } catch(TakEngineException e) {
+//                        throw new GameServerException(ErrorCode.GAME_ENGINE_ERROR);
+//                    }
+//                }
+//            }
         }
         else {
-            gameDAO.createGameRequest(user.getId().toString(), other, gameRequest.getSize(), requesterColor, first);
+            //gameDAO.createGameRequest(user.getId().toString(), other, gameRequest.getSize(), requesterColor, first);
         }
     }
 
@@ -93,13 +93,12 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        gameDAO.deleteGameRequest(user.getId().toString(), request);
+        //gameDAO.deleteGameRequest(user.getId().toString(), request);
     }
 
     public void respondToGame(Auth auth, String id, GameRequestAnswer answer) throws GameServerException {
         Validator.validateAuth(auth);
         UUID uuid = Validator.validateId(id);
-        Answer response = Validator.validateAnswer(answer.getAnswer());
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -111,11 +110,11 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        if(response == Answer.ACCEPT) {
+        if(answer.getAnswer() == Answer.ACCEPT) {
             RequestInfo info = gameDAO.getGameRequestInfo(id, user.getId().toString());
-            gameDAO.startGame(id, user.getId().toString(), info.getSize(), info.getRequesterColor(), info.getFirst());
+            //gameDAO.startGame(id, user.getId().toString(), info.getSize(), info.getRequesterColor(), info.getFirst());
         }
-        gameDAO.deleteGameRequest(id, user.getId().toString());
+        //gameDAO.deleteGameRequest(id, user.getId().toString());
     }
 
     public RequestInfo[] checkIncomingRequests(Auth auth) throws GameServerException {
@@ -158,16 +157,16 @@ public class GameUtils {
         for(int i = 0; i < requests.length; i++) {
             if(requests[i] != null) {
                 for(int j = i + 1; j < requests.length; j++) {
-                    if(requests[j] != null && requests[i].getSize() == requests[j].getSize() &&
-                       !gameDAO.playingGame(requests[i].getRequester(), requests[j].getRequester())) {
-                       //!socialDAO.isBlocked(UUID.fromString(requests[i].getRequester()), UUID.fromString(requests[j].getRequester())) &&
-                       //!socialDAO.isBlocked(UUID.fromString(requests[j].getRequester()), UUID.fromString(requests[i].getRequester()))) {
-                        gameDAO.startGame(requests[i].getRequester(), requests[j].getRequester(), requests[i].getSize(), Player.WHITE, Player.WHITE);
-                        gameDAO.deleteRandomGameRequest(requests[i].getRequester());
-                        gameDAO.deleteRandomGameRequest(requests[j].getRequester());
-                        requests[j] = null;
-                        break;
-                    }
+//                    if(requests[j] != null && requests[i].getSize() == requests[j].getSize() &&
+//                       !gameDAO.playingGame(requests[i].getRequester(), requests[j].getRequester()) &&
+//                       !socialDAO.isBlocked(UUID.fromString(requests[i].getRequester()), UUID.fromString(requests[j].getRequester())) &&
+//                       !socialDAO.isBlocked(UUID.fromString(requests[j].getRequester()), UUID.fromString(requests[i].getRequester()))) {
+//                        gameDAO.startGame(requests[i].getRequester(), requests[j].getRequester(), requests[i].getSize(), Player.WHITE, Player.WHITE);
+//                        gameDAO.deleteRandomGameRequest(requests[i].getRequester());
+//                        gameDAO.deleteRandomGameRequest(requests[j].getRequester());
+//                        requests[j] = null;
+//                        break;
+//                    }
                 }
             }
         }
@@ -183,7 +182,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        gameDAO.deleteRandomGameRequest(user.getId().toString());
+        //gameDAO.deleteRandomGameRequest(user.getId().toString());
     }
 
     public boolean randomRequestExists(Auth auth) throws GameServerException {
@@ -282,7 +281,7 @@ public class GameUtils {
         Complete cpt = Validator.validateComplete(complete);
         Pending pnd = Validator.validatePending(pending);
 
-        return gameDAO.listGames(user.getId().toString(), users, start, end, cpt, pnd, szs, wnr, clr);
+        return gameDAO.listGames(user.getId().toString(), users, start, end, cpt, pnd);
     }
 
     public void sendGameMessage(Auth auth, String gameId, Text message) throws GameServerException {
@@ -376,12 +375,12 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.ILLEGAL_MOVE);
         }
 
-        gameDAO.updateState(gameId, turn.getText());
+        //gameDAO.updateState(gameId, turn.getText());
 
         GameInfo info = gameDAO.getGameInfo(gameId);
         GameResult result = state.checkForWinner();
         if(result.isFinished()) {
-            gameDAO.finishGame(gameId, result.getWinner());
+            //gameDAO.finishGame(gameId, result.getWinner());
             if(result.getWinner() == Player.WHITE) {
                 updateRatings(info.getWhite(), info.getBlack());
             }
@@ -442,12 +441,12 @@ public class GameUtils {
 
     private void checkForForfeits(String userId) throws GameServerException {
         if(daysToForfeit > 0) {
-            GameInfo[] openGames = gameDAO.listGames(userId, null, null, null, Complete.INCOMPLETE, null, null, null, null);
+            GameInfo[] openGames = gameDAO.listGames(userId, null, null, null, Complete.INCOMPLETE, null);
 
             for(GameInfo game : openGames) {
                 //check if it has been enough days
                 if(Instant.now().toEpochMilli() - game.getLast() > daysToForfeit * (1000 * 60 * 60 * 24)) {
-                    gameDAO.finishGame(game.getGameId(), game.getCurrent().opposite());
+                    //gameDAO.finishGame(game.getGameId(), game.getCurrent().opposite());
                 }
             }
         }

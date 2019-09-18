@@ -41,10 +41,10 @@ public class AiUtils {
             Turn turn = player.getTurn(state);
             state.executeTurn(turn);
 
-            gameDAO.updateState(gameId, turn.toString());
+            //gameDAO.updateState(gameId, turn.toString());
             GameResult result = state.checkForWinner();
             if(result.isFinished()) {
-                gameDAO.finishGame(gameId, result.getWinner());
+                //gameDAO.finishGame(gameId, result.getWinner());
             }
         } catch(TakEngineException e) {
             throw new GameServerException(ErrorCode.GAME_ENGINE_ERROR);
