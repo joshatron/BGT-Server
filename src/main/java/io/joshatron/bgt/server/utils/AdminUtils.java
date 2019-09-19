@@ -66,6 +66,7 @@ public class AdminUtils {
 
         String newPass = RandomStringUtils.randomAlphanumeric(30);
         accountDAO.updatePassword(userId, newPass);
+        accountDAO.updateState(userId, State.NORMAL);
 
         return newPass;
     }
