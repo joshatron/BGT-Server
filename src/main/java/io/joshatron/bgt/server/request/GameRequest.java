@@ -1,13 +1,14 @@
 package io.joshatron.bgt.server.request;
 
-import io.joshatron.bgt.engine.state.GameParameters;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
 public class GameRequest {
     private String playerIndicator;
     private String[] opponents;
-    private GameParameters parameters;
+    private Map<String,String> parameters;
 }

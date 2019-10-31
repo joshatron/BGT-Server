@@ -124,7 +124,7 @@ public class GameController {
         }
     }
 
-    @GetMapping(value = "/search", produces = "application/json")
+    @GetMapping(value = "/game/search", produces = "application/json")
     public ResponseEntity findGames(@RequestHeader(value="Authorization") String auth, @RequestParam(value = "opponents", required = false) String opponents,
                                     @RequestParam(value = "start", required = false) Long start, @RequestParam(value = "end", required = false) Long end,
                                     @RequestParam(value = "complete", required = false) String complete, @RequestParam(value = "pending", required = false) String pending) {
