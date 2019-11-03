@@ -57,9 +57,6 @@ public class GameUtils {
         if(!ai && gameDAO.playingGame(user.getId(), otherId)) {
             throw new GameServerException(ErrorCode.GAME_EXISTS);
         }
-        if(!ai && gameDAO.gameRequestExists(user.getId().toString(), other)) {
-            throw new GameServerException(ErrorCode.GAME_REQUEST_EXISTS);
-        }
 
         if(ai) {
 //            gameDAO.startGame(user.getId().toString(), other.toUpperCase(), gameRequest.getSize(), requesterColor, first);
@@ -86,7 +83,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!gameDAO.gameRequestExists(user.getId(), requestId)) {
+        if(!gameDAO.gameRequestExists(requestId)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
@@ -95,19 +92,16 @@ public class GameUtils {
 
     public void deleteRequest(Auth auth, String request) throws GameServerException {
         Validator.validateAuth(auth);
-        UUID otherId = Validator.validateId(request);
+        UUID requestId = Validator.validateId(request);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(!gameDAO.gameRequestExists(user.getId().toString(), request)) {
+        if(!gameDAO.gameRequestExists(requestId)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        //gameDAO.deleteGameRequest(user.getId().toString(), request);
+        gameDAO.deleteGameRequest(requestId);
     }
 
     public void respondToGame(Auth auth, String id, GameRequestAnswer answer) throws GameServerException {
@@ -117,15 +111,12 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
         User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(uuid)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(!gameDAO.gameRequestExists(id, user.getId().toString())) {
+        if(!gameDAO.gameRequestExists(uuid)) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
         if(answer.getAnswer() == Answer.ACCEPT) {
-            RequestInfo info = gameDAO.getGameRequestInfo(id, user.getId().toString());
+            RequestInfo info = gameDAO.getGameRequestInfo(uuid, user.getId());
             //gameDAO.startGame(id, user.getId().toString(), info.getSize(), info.getRequesterColor(), info.getFirst());
         }
         //gameDAO.deleteGameRequest(id, user.getId().toString());
@@ -301,7 +292,7 @@ public class GameUtils {
     public void sendGameMessage(Auth auth, String gameId, Message message) throws GameServerException {
         Validator.validateAuth(auth);
         Validator.validateId(gameId);
-        Validator.validateText(message);
+        //Validator.validateText(message);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -317,7 +308,7 @@ public class GameUtils {
             throw new GameServerException(ErrorCode.GAME_IS_COMPLETE);
         }
 
-        socialDAO.sendMessage(user.getId(), UUID.fromString(gameId), message.getText(), RecipientType.GAME);
+        socialDAO.sendMessage(user.getId(), UUID.fromString(gameId), message.getMessage(), RecipientType.GAME);
     }
 
     public String[] getPossibleTurns(Auth auth, String gameId) throws GameServerException {
@@ -355,7 +346,7 @@ public class GameUtils {
     public void playTurn(Auth auth, String gameId, Move move) throws GameServerException {
         Validator.validateAuth(auth);
         Validator.validateId(gameId);
-        Validator.validateText(move);
+        //Validator.validateText(move);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }

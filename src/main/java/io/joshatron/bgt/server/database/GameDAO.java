@@ -50,7 +50,7 @@ public class GameDAO {
         return false;
     }
 
-    public boolean gameRequestExists(UUID requester, UUID other) throws GameServerException {
+    public boolean gameRequestExists(UUID request) throws GameServerException {
         return false;
     }
 
