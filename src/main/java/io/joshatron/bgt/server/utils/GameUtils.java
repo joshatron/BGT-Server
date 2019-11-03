@@ -79,6 +79,20 @@ public class GameUtils {
         }
     }
 
+    public RequestInfo getRequest(Auth auth, String request) throws GameServerException {
+        Validator.validateAuth(auth);
+        UUID requestId = Validator.validateId(request);
+        if(!accountDAO.isAuthenticated(auth)) {
+            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
+        }
+        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        if(!gameDAO.gameRequestExists(user.getId(), requestId)) {
+            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
+        }
+
+        return gameDAO.getGameRequestInfo(user.getId(), requestId);
+    }
+
     public void deleteRequest(Auth auth, String request) throws GameServerException {
         Validator.validateAuth(auth);
         UUID otherId = Validator.validateId(request);
@@ -137,7 +151,7 @@ public class GameUtils {
         return gameDAO.getOutgoingGameRequests(user.getId().toString());
     }
 
-    public void requestRandomGame(Auth auth) throws GameServerException {
+    public void requestRandomGame(Auth auth, RandomGameRequest request) throws GameServerException {
         Validator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -198,7 +212,7 @@ public class GameUtils {
         return false;
     }
 
-    public GameInfo getGameInfo(Auth auth, String gameId, Boolean fullState) throws GameServerException {
+    public GameInfo getGameInfo(Auth auth, String gameId) throws GameServerException {
         Validator.validateAuth(auth);
         Validator.validateId(gameId);
         if(!accountDAO.isAuthenticated(auth)) {
@@ -222,7 +236,7 @@ public class GameUtils {
             }
         }
 
-        if(fullState == null || !fullState) {
+        if(false) {
             return info;
         }
         else {
@@ -284,7 +298,7 @@ public class GameUtils {
         return gameDAO.listGames(user.getId().toString(), users, start, end, cpt, pnd);
     }
 
-    public void sendGameMessage(Auth auth, String gameId, Text message) throws GameServerException {
+    public void sendGameMessage(Auth auth, String gameId, Message message) throws GameServerException {
         Validator.validateAuth(auth);
         Validator.validateId(gameId);
         Validator.validateText(message);
@@ -338,10 +352,10 @@ public class GameUtils {
         return toReturn;
     }
 
-    public void playTurn(Auth auth, String gameId, Text turn) throws GameServerException {
+    public void playTurn(Auth auth, String gameId, Move move) throws GameServerException {
         Validator.validateAuth(auth);
         Validator.validateId(gameId);
-        Validator.validateText(turn);
+        Validator.validateText(move);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -359,7 +373,7 @@ public class GameUtils {
 
         Turn proposed;
         try {
-            proposed = TurnUtils.turnFromString(turn.getText());
+            proposed = TurnUtils.turnFromString(move.getMove());
         } catch(TakEngineException e) {
             throw new GameServerException(ErrorCode.INVALID_FORMATTING);
         }

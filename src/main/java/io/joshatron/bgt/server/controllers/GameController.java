@@ -1,9 +1,6 @@
 package io.joshatron.bgt.server.controllers;
 
-import io.joshatron.bgt.server.request.Auth;
-import io.joshatron.bgt.server.request.GameRequest;
-import io.joshatron.bgt.server.request.GameRequestAnswer;
-import io.joshatron.bgt.server.request.Text;
+import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.response.GameInfo;
 import io.joshatron.bgt.server.response.GameNotifications;
 import io.joshatron.bgt.server.response.RequestInfo;
@@ -35,7 +32,19 @@ public class GameController {
         }
     }
 
-    @DeleteMapping(value = "/request/cancel/{id}", produces = "application/json")
+    @GetMapping(value = "/request/{id}", produces = "application/json")
+    public ResponseEntity getGameRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String request) {
+        try {
+            logger.info("Getting game request");
+            RequestInfo gameRequest = gameUtils.getRequest(new Auth(auth), request);
+            logger.info("Successfully grabbed request");
+            return new ResponseEntity<>(gameRequest, HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return ControllerUtils.handleExceptions(e, logger);
+        }
+    }
+
+    @DeleteMapping(value = "/request/{id}/cancel", produces = "application/json")
     public ResponseEntity cancelGameRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String request) {
         try {
             logger.info("Deleting game request");
@@ -47,7 +56,7 @@ public class GameController {
         }
     }
 
-    @PostMapping(value = "/request/respond/{id}", produces = "application/json")
+    @PostMapping(value = "/request/{id}/respond", produces = "application/json")
     public ResponseEntity respondToGameRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String request, @RequestBody GameRequestAnswer answer) {
         try {
             logger.info("Responding to game request");
@@ -84,10 +93,10 @@ public class GameController {
     }
 
     @PostMapping(value = "/request/random/create", produces = "application/json")
-    public ResponseEntity requestRandomGame(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity requestRandomGame(@RequestHeader(value="Authorization") String auth, @RequestBody RandomGameRequest request) {
         try {
             logger.info("Requesting a random game");
-            gameUtils.requestRandomGame(new Auth(auth));
+            gameUtils.requestRandomGame(new Auth(auth), request);
             logger.info("Random game successfully made");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -139,10 +148,10 @@ public class GameController {
     }
 
     @GetMapping(value = "/game/{id}", produces = "application/json")
-    public ResponseEntity getGameInfo(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String gameId, @RequestParam(value = "full", required = false) Boolean fullState) {
+    public ResponseEntity getGameInfo(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String gameId) {
         try {
             logger.info("Getting game info");
-            GameInfo info = gameUtils.getGameInfo(new Auth(auth), gameId, fullState);
+            GameInfo info = gameUtils.getGameInfo(new Auth(auth), gameId);
             logger.info("Game info found");
             return new ResponseEntity<>(info, HttpStatus.OK);
         } catch (Exception e) {
@@ -151,10 +160,9 @@ public class GameController {
     }
 
     @PostMapping(value = "/game/{id}/send-message", produces = "application/json")
-    public ResponseEntity sendGameMessage(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String gameId, @RequestBody Text message) {
+    public ResponseEntity sendGameMessage(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String gameId, @RequestBody Message message) {
         try {
             logger.info("Sending message to game");
-            //logic to send message
             gameUtils.sendGameMessage(new Auth(auth), gameId, message);
             logger.info("Game message sent");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -176,10 +184,10 @@ public class GameController {
     }
 
     @PostMapping(value = "/game/{id}/play", produces = "application/json")
-    public ResponseEntity playTurn(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String gameId, @RequestBody Text turn) {
+    public ResponseEntity playTurn(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String gameId, @RequestBody Move move) {
         try {
             logger.info("Trying to play a turn");
-            gameUtils.playTurn(new Auth(auth), gameId, turn);
+            gameUtils.playTurn(new Auth(auth), gameId, move);
             logger.info("Turn successfully made");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

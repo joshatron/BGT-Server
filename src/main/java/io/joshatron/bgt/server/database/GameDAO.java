@@ -50,7 +50,7 @@ public class GameDAO {
         return false;
     }
 
-    public boolean gameRequestExists(String requester, String other) throws GameServerException {
+    public boolean gameRequestExists(UUID requester, UUID other) throws GameServerException {
         return false;
     }
 
@@ -70,7 +70,7 @@ public class GameDAO {
         return false;
     }
 
-    public RequestInfo getGameRequestInfo(String requester, String other) throws GameServerException {
+    public RequestInfo getGameRequestInfo(UUID requester, UUID request) throws GameServerException {
         return null;
     }
 
