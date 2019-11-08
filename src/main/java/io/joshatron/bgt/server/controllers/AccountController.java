@@ -3,7 +3,8 @@ package io.joshatron.bgt.server.controllers;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
-import io.joshatron.bgt.server.request.Text;
+import io.joshatron.bgt.server.request.NewPassword;
+import io.joshatron.bgt.server.request.NewUsername;
 import io.joshatron.bgt.server.utils.AccountUtils;
 import io.joshatron.bgt.server.response.UserInfo;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class AccountController {
     }
 
     @PostMapping(value = "/change-pass", consumes = "application/json", produces = "application/json")
-    public ResponseEntity changePassword(@RequestHeader(value="Authorization") String auth, @RequestBody Text passChange) {
+    public ResponseEntity changePassword(@RequestHeader(value="Authorization") String auth, @RequestBody NewPassword passChange) {
         try {
             logger.info("Changing password");
             accountUtils.updatePassword(new Auth(auth), passChange);
@@ -46,7 +47,7 @@ public class AccountController {
     }
 
     @PostMapping(value = "/change-name", consumes = "application/json", produces = "application/json")
-    public ResponseEntity changeUsername(@RequestHeader(value="Authorization") String auth, @RequestBody Text userChange) {
+    public ResponseEntity changeUsername(@RequestHeader(value="Authorization") String auth, @RequestBody NewUsername userChange) {
         try {
             logger.info("Changing username");
             accountUtils.updateUsername(new Auth(auth), userChange);

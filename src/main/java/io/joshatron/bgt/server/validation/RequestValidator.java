@@ -1,4 +1,4 @@
-package io.joshatron.bgt.server.utils;
+package io.joshatron.bgt.server.validation;
 
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.tak.engine.game.Player;
@@ -8,9 +8,9 @@ import io.joshatron.bgt.server.exceptions.GameServerException;
 import java.util.Date;
 import java.util.UUID;
 
-public class Validator {
+public class RequestValidator {
 
-    private Validator() {
+    private RequestValidator() {
         throw new IllegalStateException("This is a utility class");
     }
 
@@ -24,6 +24,18 @@ public class Validator {
 
     public static void validateText(Text text) throws GameServerException {
         if(text == null || text.getText() == null) {
+            throw new GameServerException(ErrorCode.EMPTY_FIELD);
+        }
+    }
+
+    public static void validateNewPassword(NewPassword newPassword) throws GameServerException {
+        if(newPassword == null || newPassword.getNewPassword() == null) {
+            throw new GameServerException(ErrorCode.EMPTY_FIELD);
+        }
+    }
+
+    public static void validateNewUsername(NewUsername newUsername) throws GameServerException {
+        if(newUsername == null || newUsername.getNewUsername() == null) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
     }
