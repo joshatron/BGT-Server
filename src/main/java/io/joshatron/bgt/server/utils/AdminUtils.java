@@ -7,7 +7,7 @@ import io.joshatron.bgt.server.database.AdminDAO;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.response.State;
-import io.joshatron.bgt.server.validation.RequestValidator;
+import io.joshatron.bgt.server.validation.DTOValidator;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,9 +39,9 @@ public class AdminUtils {
     }
 
     public void changePassword(Auth auth, Text passChange) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        RequestValidator.validateText(passChange);
-        RequestValidator.validatePassword(passChange.getText());
+        DTOValidator.validateAuth(auth);
+        DTOValidator.validateText(passChange);
+        DTOValidator.validatePassword(passChange.getText());
         if(!adminDAO.isInitialized()) {
             throw new GameServerException(ErrorCode.ADMIN_PASSWORD_NOT_INITIALIZED);
         }
@@ -53,8 +53,8 @@ public class AdminUtils {
     }
 
     public String resetUserPassword(Auth auth, String userToChange) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        UUID userId = RequestValidator.validateId(userToChange);
+        DTOValidator.validateAuth(auth);
+        UUID userId = DTOValidator.validateId(userToChange);
         if(!adminDAO.isInitialized()) {
             throw new GameServerException(ErrorCode.ADMIN_PASSWORD_NOT_INITIALIZED);
         }
@@ -73,8 +73,8 @@ public class AdminUtils {
     }
 
     public void banUser(Auth auth, String userToBan) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        UUID userId = RequestValidator.validateId(userToBan);
+        DTOValidator.validateAuth(auth);
+        UUID userId = DTOValidator.validateId(userToBan);
         if(!adminDAO.isInitialized()) {
             throw new GameServerException(ErrorCode.ADMIN_PASSWORD_NOT_INITIALIZED);
         }
@@ -89,8 +89,8 @@ public class AdminUtils {
     }
 
     public void unbanUser(Auth auth, String userToSet) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        UUID userId = RequestValidator.validateId(userToSet);
+        DTOValidator.validateAuth(auth);
+        UUID userId = DTOValidator.validateId(userToSet);
         if(!adminDAO.isInitialized()) {
             throw new GameServerException(ErrorCode.ADMIN_PASSWORD_NOT_INITIALIZED);
         }
@@ -108,8 +108,8 @@ public class AdminUtils {
     }
 
     public void unlockUser(Auth auth, String userToSet) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        UUID userId = RequestValidator.validateId(userToSet);
+        DTOValidator.validateAuth(auth);
+        UUID userId = DTOValidator.validateId(userToSet);
         if(!adminDAO.isInitialized()) {
             throw new GameServerException(ErrorCode.ADMIN_PASSWORD_NOT_INITIALIZED);
         }

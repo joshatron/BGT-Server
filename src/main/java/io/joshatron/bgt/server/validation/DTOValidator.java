@@ -8,10 +8,20 @@ import io.joshatron.bgt.server.exceptions.GameServerException;
 import java.util.Date;
 import java.util.UUID;
 
-public class RequestValidator {
+public class DTOValidator {
 
-    private RequestValidator() {
+    private DTOValidator() {
         throw new IllegalStateException("This is a utility class");
+    }
+
+    public static Auth validateAuthString(String authString) {
+        if(authString == null) {
+            throw new GameServerException(ErrorCode.EMPTY_AUTH);
+        }
+        Auth auth = new Auth(authString);
+        validateAuth(auth);
+
+        return auth;
     }
 
     public static void validateAuth(Auth auth) throws GameServerException {

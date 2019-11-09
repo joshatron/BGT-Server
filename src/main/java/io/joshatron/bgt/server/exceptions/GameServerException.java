@@ -2,7 +2,7 @@ package io.joshatron.bgt.server.exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class GameServerException extends Exception {
+public class GameServerException extends RuntimeException {
 
     private ErrorCode code;
 

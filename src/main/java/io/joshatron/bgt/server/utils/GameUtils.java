@@ -3,7 +3,7 @@ package io.joshatron.bgt.server.utils;
 import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.response.*;
-import io.joshatron.bgt.server.validation.RequestValidator;
+import io.joshatron.bgt.server.validation.DTOValidator;
 import io.joshatron.tak.engine.exception.TakEngineException;
 import io.joshatron.tak.engine.game.GameResult;
 import io.joshatron.tak.engine.game.GameState;
@@ -38,13 +38,13 @@ public class GameUtils {
     private Integer daysToForfeit;
 
     public void requestGame(Auth auth, String other, GameRequest gameRequest) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         boolean ai = AiUtils.isAi(other);
         UUID otherId = null;
         if(!ai) {
-            otherId = RequestValidator.validateId(other);
+            otherId = DTOValidator.validateId(other);
         }
-        Player requesterColor = RequestValidator.validatePlayer(gameRequest.getPlayerIndicator());
+        Player requesterColor = DTOValidator.validatePlayer(gameRequest.getPlayerIndicator());
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -78,8 +78,8 @@ public class GameUtils {
     }
 
     public RequestInfo getRequest(Auth auth, String request) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        UUID requestId = RequestValidator.validateId(request);
+        DTOValidator.validateAuth(auth);
+        UUID requestId = DTOValidator.validateId(request);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -92,8 +92,8 @@ public class GameUtils {
     }
 
     public void deleteRequest(Auth auth, String request) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        UUID requestId = RequestValidator.validateId(request);
+        DTOValidator.validateAuth(auth);
+        UUID requestId = DTOValidator.validateId(request);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -106,8 +106,8 @@ public class GameUtils {
     }
 
     public void respondToGame(Auth auth, String id, GameRequestAnswer answer) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        UUID uuid = RequestValidator.validateId(id);
+        DTOValidator.validateAuth(auth);
+        UUID uuid = DTOValidator.validateId(id);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -124,7 +124,7 @@ public class GameUtils {
     }
 
     public RequestInfo[] checkIncomingRequests(Auth auth) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -134,7 +134,7 @@ public class GameUtils {
     }
 
     public RequestInfo[] checkOutgoingRequests(Auth auth) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -144,7 +144,7 @@ public class GameUtils {
     }
 
     public void requestRandomGame(Auth auth, RandomGameRequest request) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -179,7 +179,7 @@ public class GameUtils {
     }
 
     public void deleteRandomRequest(Auth auth) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -192,7 +192,7 @@ public class GameUtils {
     }
 
     public boolean randomRequestExists(Auth auth) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -205,8 +205,8 @@ public class GameUtils {
     }
 
     public GameInfo getGameInfo(Auth auth, String gameId) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        RequestValidator.validateId(gameId);
+        DTOValidator.validateAuth(auth);
+        DTOValidator.validateId(gameId);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -248,7 +248,7 @@ public class GameUtils {
     }
 
     public GameInfo[] findGames(Auth auth, String opponents, Long startTime, Long endTime, String complete, String pending) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -274,7 +274,7 @@ public class GameUtils {
             users = opponents.split(",");
             for (String u : users) {
                 if(!AiUtils.isAi(u)) {
-                    UUID uuid = RequestValidator.validateId(u);
+                    UUID uuid = DTOValidator.validateId(u);
                     if (!accountDAO.userExists(uuid)) {
                         throw new GameServerException(ErrorCode.USER_NOT_FOUND);
                     }
@@ -284,15 +284,15 @@ public class GameUtils {
         if(start != null && end != null && start.after(end)) {
             throw new GameServerException(ErrorCode.INVALID_DATE);
         }
-        Complete cpt = RequestValidator.validateComplete(complete);
-        Pending pnd = RequestValidator.validatePending(pending);
+        Complete cpt = DTOValidator.validateComplete(complete);
+        Pending pnd = DTOValidator.validatePending(pending);
 
         return gameDAO.listGames(user.getId().toString(), users, start, end, cpt, pnd);
     }
 
     public void sendGameMessage(Auth auth, String gameId, Message message) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        RequestValidator.validateId(gameId);
+        DTOValidator.validateAuth(auth);
+        DTOValidator.validateId(gameId);
         //Validator.validateText(message);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -313,8 +313,8 @@ public class GameUtils {
     }
 
     public String[] getPossibleTurns(Auth auth, String gameId) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        RequestValidator.validateId(gameId);
+        DTOValidator.validateAuth(auth);
+        DTOValidator.validateId(gameId);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -345,8 +345,8 @@ public class GameUtils {
     }
 
     public void playTurn(Auth auth, String gameId, Move move) throws GameServerException {
-        RequestValidator.validateAuth(auth);
-        RequestValidator.validateId(gameId);
+        DTOValidator.validateAuth(auth);
+        DTOValidator.validateId(gameId);
         //Validator.validateText(move);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -402,8 +402,8 @@ public class GameUtils {
     private void updateRatings(String winner, String loser) throws GameServerException {
         int k = 20;
 
-        UUID winnerId = RequestValidator.validateId(winner);
-        UUID loserId = RequestValidator.validateId(loser);
+        UUID winnerId = DTOValidator.validateId(winner);
+        UUID loserId = DTOValidator.validateId(loser);
 
         User w = accountDAO.getUserFromId(winnerId);
         User l = accountDAO.getUserFromId(loserId);
@@ -417,7 +417,7 @@ public class GameUtils {
     }
 
     public GameNotifications getNotifications(Auth auth) throws GameServerException {
-        RequestValidator.validateAuth(auth);
+        DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
