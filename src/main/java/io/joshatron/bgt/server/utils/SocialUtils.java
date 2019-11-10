@@ -77,11 +77,10 @@ public class SocialUtils {
         socialDAO.deleteFriendRequest(user.getId(), otherId);
     }
 
-    public void respondToFriendRequest(Auth auth, String other, Text answer) throws GameServerException {
+    public void respondToFriendRequest(Auth auth, String other, FriendResponse answer) throws GameServerException {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
-        DTOValidator.validateText(answer);
-        Answer response = DTOValidator.validateAnswer(answer.getText());
+        DTOValidator.validateFriendResponse(answer);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
@@ -93,7 +92,7 @@ public class SocialUtils {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
 
-        if(response == Answer.ACCEPT) {
+        if(answer.getResponse() == Answer.ACCEPT) {
             socialDAO.makeFriends(otherId, user.getId());
         }
         socialDAO.deleteFriendRequest(otherId, user.getId());

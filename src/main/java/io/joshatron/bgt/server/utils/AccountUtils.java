@@ -19,8 +19,6 @@ public class AccountUtils {
     private AccountDAO accountDAO;
 
     public boolean isAuthenticated(Auth auth) {
-        DTOValidator.validateAuth(auth);
-
         return accountDAO.isAuthenticated(auth);
     }
 

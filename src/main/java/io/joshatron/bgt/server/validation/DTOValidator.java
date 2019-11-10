@@ -24,7 +24,7 @@ public class DTOValidator {
         return auth;
     }
 
-    public static void validateAuth(Auth auth) throws GameServerException {
+    public static void validateAuth(Auth auth) {
         if(auth == null) {
             throw new GameServerException(ErrorCode.EMPTY_AUTH);
         }
@@ -32,25 +32,25 @@ public class DTOValidator {
         validatePassword(auth.getPassword());
     }
 
-    public static void validateText(Text text) throws GameServerException {
+    public static void validateText(Text text) {
         if(text == null || text.getText() == null) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
     }
 
-    public static void validateNewPassword(NewPassword newPassword) throws GameServerException {
+    public static void validateNewPassword(NewPassword newPassword) {
         if(newPassword == null || newPassword.getNewPassword() == null) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
     }
 
-    public static void validateNewUsername(NewUsername newUsername) throws GameServerException {
+    public static void validateNewUsername(NewUsername newUsername) {
         if(newUsername == null || newUsername.getNewUsername() == null) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
     }
 
-    public static void validateUsername(String username) throws GameServerException {
+    public static void validateUsername(String username) {
         if(username == null || username.length() == 0) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
@@ -60,13 +60,13 @@ public class DTOValidator {
         }
     }
 
-    public static void validatePassword(String password) throws GameServerException {
+    public static void validatePassword(String password) {
         if(password == null || password.length() == 0) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
     }
 
-    public static UUID validateId(String id) throws GameServerException {
+    public static UUID validateId(String id) {
         if(id == null || id.length() == 0) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
@@ -79,7 +79,13 @@ public class DTOValidator {
         }
     }
 
-    public static Answer validateAnswer(String response) throws GameServerException {
+    public static void validateFriendResponse(FriendResponse response) {
+        if(response == null || response.getResponse() == null) {
+            throw new GameServerException(ErrorCode.EMPTY_FIELD);
+        }
+    }
+
+    public static Answer validateAnswer(String response) {
         if(response == null || response.length() == 0) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
@@ -94,7 +100,7 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static Read validateRead(String read) throws GameServerException {
+    public static Read validateRead(String read) {
         if(read == null || read.length() == 0) {
             return Read.BOTH;
         }
@@ -109,7 +115,7 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static Player validatePlayer(String player) throws GameServerException {
+    public static Player validatePlayer(String player) {
         if(player == null || player.length() == 0) {
             return Player.NONE;
         }
@@ -124,7 +130,7 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static Complete validateComplete(String complete) throws GameServerException {
+    public static Complete validateComplete(String complete) {
         if(complete == null || complete.length() == 0) {
             return Complete.BOTH;
         }
@@ -139,7 +145,7 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static Winner validateWinner(String from) throws GameServerException {
+    public static Winner validateWinner(String from) {
         if(from == null || from.length() == 0) {
             return Winner.BOTH;
         }
@@ -154,7 +160,7 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static Pending validatePending(String pending) throws GameServerException {
+    public static Pending validatePending(String pending) {
         if(pending == null || pending.length() == 0) {
             return Pending.BOTH;
         }
@@ -169,7 +175,7 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static From validateFrom(String from) throws GameServerException {
+    public static From validateFrom(String from) {
         if(from == null || from.length() == 0) {
             return From.BOTH;
         }
@@ -184,7 +190,7 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static void validateMarkRead(MarkRead markRead) throws GameServerException {
+    public static void validateMarkRead(MarkRead markRead) {
         if(markRead == null) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
@@ -202,7 +208,7 @@ public class DTOValidator {
         }
     }
 
-    public static void validateDate(Date date) throws GameServerException {
+    public static void validateDate(Date date) {
         Date now = new Date();
 
         if(now.before(date)) {
@@ -210,7 +216,7 @@ public class DTOValidator {
         }
     }
 
-    public static void validateGameRequest(GameRequest gameRequest) throws GameServerException {
+    public static void validateGameRequest(GameRequest gameRequest) {
         //validateGameBoardSize(gameRequest.getSize());
 
 //        if(!gameRequest.getFirst().equalsIgnoreCase("white") && !gameRequest.getFirst().equalsIgnoreCase("black")) {
@@ -222,7 +228,7 @@ public class DTOValidator {
 //        }
     }
 
-    public static void validateGameBoardSize(int size) throws GameServerException {
+    public static void validateGameBoardSize(int size) {
         if(size != 3 && size != 4 && size != 5 && size != 6 && size != 8) {
             throw new GameServerException(ErrorCode.ILLEGAL_SIZE);
         }

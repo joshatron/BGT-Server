@@ -1,6 +1,7 @@
 package io.joshatron.bgt.server.controllers;
 
 import io.joshatron.bgt.server.request.Auth;
+import io.joshatron.bgt.server.request.FriendResponse;
 import io.joshatron.bgt.server.request.Text;
 import io.joshatron.bgt.server.response.MessageInfo;
 import io.joshatron.bgt.server.response.SocialNotifications;
@@ -48,7 +49,7 @@ public class SocialController {
     }
 
     @PostMapping(value = "/request/respond/{id}", produces = "application/json")
-    public ResponseEntity respondToRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String id, @RequestBody Text friendResponse) {
+    public ResponseEntity respondToRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String id, @RequestBody FriendResponse friendResponse) {
         try {
             logger.info("Responding to friend request");
             socialUtils.respondToFriendRequest(new Auth(auth), id, friendResponse);
