@@ -15,6 +15,15 @@ public class AccountValidator {
     @Autowired
     private AccountDAO accountDAO;
 
+    public Auth verifyCredentials(String authString) {
+        Auth auth = DTOValidator.validateAuthString(authString);
+        if(!accountDAO.isAuthenticated(auth)) {
+            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
+        }
+
+        return auth;
+    }
+
     public void validateRegistration(Auth auth) {
         DTOValidator.validateAuth(auth);
         if(accountDAO.usernameExists(auth.getUsername())) {
@@ -22,36 +31,34 @@ public class AccountValidator {
         }
     }
 
-    public void validatePasswordChange(String authString, NewPassword passChange) {
-        Auth auth = DTOValidator.validateAuthString(authString);
+    public Auth validatePasswordChange(String authString, NewPassword passChange) {
+        Auth auth = verifyCredentials(authString);
         DTOValidator.validateNewPassword(passChange);
         DTOValidator.validatePassword(passChange.getNewPassword());
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
         Auth testAuth = new Auth(auth.getUsername(), passChange.getNewPassword());
         if(accountDAO.isAuthenticated(testAuth)) {
             throw new GameServerException(ErrorCode.SAME_PASSWORD);
         }
+
+        return auth;
     }
 
-    public void validateUsernameChange(String authString, NewUsername userChange) {
-        Auth auth = DTOValidator.validateAuthString(authString);
+    public Auth validateUsernameChange(String authString, NewUsername userChange) {
+        Auth auth = verifyCredentials(authString);
         DTOValidator.validateNewUsername(userChange);
         DTOValidator.validateUsername(userChange.getNewUsername());
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
         if(auth.getUsername().equals(userChange.getNewUsername())) {
             throw new GameServerException(ErrorCode.SAME_USERNAME);
         }
         if(!auth.getUsername().equalsIgnoreCase(userChange.getNewUsername()) &&  accountDAO.usernameExists(userChange.getNewUsername())) {
             throw new GameServerException(ErrorCode.USERNAME_TAKEN);
         }
+
+        return auth;
     }
 
-    public void validateAuthenticate(String authString) {
-        DTOValidator.validateAuthString(authString);
+    public Auth validateAuthenticate(String authString) {
+        return DTOValidator.validateAuthString(authString);
     }
 
     public void validateFindUser(String username, String id) {
