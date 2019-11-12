@@ -21,15 +21,12 @@ public class AccountController {
 
     @Autowired
     private AccountUtils accountUtils;
-    @Autowired
-    private AccountValidator accountValidator;
     private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity register(@RequestBody Auth auth) {
         try {
             logger.info("Registering user");
-            accountValidator.validateRegistration(auth);
             accountUtils.registerUser(auth);
             logger.info("User successfully registered");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -42,8 +39,7 @@ public class AccountController {
     public ResponseEntity changePassword(@RequestHeader(value="Authorization") String authString, @RequestBody NewPassword passChange) {
         try {
             logger.info("Changing password");
-            Auth auth = accountValidator.validatePasswordChange(authString, passChange);
-            accountUtils.updatePassword(auth, passChange);
+            accountUtils.updatePassword(authString, passChange);
             logger.info("Password successfully changed");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -55,8 +51,7 @@ public class AccountController {
     public ResponseEntity changeUsername(@RequestHeader(value="Authorization") String authString, @RequestBody NewUsername userChange) {
         try {
             logger.info("Changing username");
-            Auth auth = accountValidator.validateUsernameChange(authString, userChange);
-            accountUtils.updateUsername(auth, userChange);
+            accountUtils.updateUsername(authString, userChange);
             logger.info("Username successfully changed");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -68,8 +63,7 @@ public class AccountController {
     public ResponseEntity authenticate(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Authenticating");
-            Auth auth = accountValidator.validateAuthenticate(authString);
-            if(accountUtils.isAuthenticated(auth)) {
+            if(accountUtils.isAuthenticated(authString)) {
                 logger.info("User successfully authenticated");
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
             }
@@ -85,7 +79,6 @@ public class AccountController {
     public ResponseEntity findUser(@RequestParam(value = "user", required = false) String username, @RequestParam(value = "id", required = false) String id) {
         try {
             logger.info("Finding user info");
-            accountValidator.validateFindUser(username, id);
             UserInfo user = accountUtils.getUserFromUsernameOrId(username, id);
             logger.info("User found, returning info");
             return new ResponseEntity<>(user, HttpStatus.OK);

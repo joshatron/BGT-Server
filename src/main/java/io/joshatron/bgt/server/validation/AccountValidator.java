@@ -9,52 +9,58 @@ import io.joshatron.bgt.server.request.NewUsername;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class AccountValidator {
 
     @Autowired
     private AccountDAO accountDAO;
 
-    public Auth verifyCredentials(String authString) {
+    public UUID verifyCredentials(String authString) {
         Auth auth = DTOValidator.validateAuthString(authString);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
 
-        return auth;
+        return accountDAO.getUserFromUsername(auth.getUsername()).getId();
     }
 
-    public void validateRegistration(Auth auth) {
+    public Auth verifyRegistration(Auth auth) {
         DTOValidator.validateAuth(auth);
         if(accountDAO.usernameExists(auth.getUsername())) {
             throw new GameServerException(ErrorCode.USERNAME_TAKEN);
         }
+
+        return auth;
     }
 
-    public Auth validatePasswordChange(String authString, NewPassword passChange) {
-        Auth auth = verifyCredentials(authString);
-        DTOValidator.validateNewPassword(passChange);
-        DTOValidator.validatePassword(passChange.getNewPassword());
-        Auth testAuth = new Auth(auth.getUsername(), passChange.getNewPassword());
+    public String verifyPassChange(UUID user, NewPassword passChange) {
+        if(passChange == null || passChange.getNewPassword() == null || passChange.getNewPassword().isEmpty()) {
+            throw new GameServerException(ErrorCode.EMPTY_FIELD);
+        }
+
+        Auth testAuth = new Auth(accountDAO.getUserFromId(user).getUsername(), passChange.getNewPassword());
         if(accountDAO.isAuthenticated(testAuth)) {
             throw new GameServerException(ErrorCode.SAME_PASSWORD);
         }
 
-        return auth;
+        return passChange.getNewPassword();
     }
 
-    public Auth validateUsernameChange(String authString, NewUsername userChange) {
-        Auth auth = verifyCredentials(authString);
-        DTOValidator.validateNewUsername(userChange);
-        DTOValidator.validateUsername(userChange.getNewUsername());
-        if(auth.getUsername().equals(userChange.getNewUsername())) {
+    public String verifyUsernameChange(UUID user, NewUsername userChange) {
+        if(userChange == null || userChange.getNewUsername() == null || userChange.getNewUsername().isEmpty()) {
+            throw new GameServerException(ErrorCode.EMPTY_FIELD);
+        }
+
+        if(accountDAO.getUserFromId(user).getUsername().equals(userChange.getNewUsername())) {
             throw new GameServerException(ErrorCode.SAME_USERNAME);
         }
-        if(!auth.getUsername().equalsIgnoreCase(userChange.getNewUsername()) &&  accountDAO.usernameExists(userChange.getNewUsername())) {
+        if(accountDAO.usernameExists(userChange.getNewUsername())) {
             throw new GameServerException(ErrorCode.USERNAME_TAKEN);
         }
 
-        return auth;
+        return userChange.getNewUsername();
     }
 
     public Auth validateAuthenticate(String authString) {
