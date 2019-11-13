@@ -118,7 +118,7 @@ public class HttpUtils {
     public static Response changeUsername(String username, String password, String newPassword, HttpClient client) throws IOException {
         String payload = "{";
         if (newPassword != null) {
-            payload += "\"text\": \"" + newPassword + "\"";
+            payload += "\"newUsername\": \"" + newPassword + "\"";
         }
         payload += "}";
 
@@ -139,7 +139,7 @@ public class HttpUtils {
     public static Response changePassword(String username, String password, String newPassword, HttpClient client) throws IOException {
         String payload = "{";
         if(newPassword != null) {
-            payload += "\"text\": \"" + newPassword + "\"";
+            payload += "\"newPassword\": \"" + newPassword + "\"";
         }
         payload += "}";
 

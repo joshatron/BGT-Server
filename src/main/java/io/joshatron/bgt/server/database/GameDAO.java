@@ -12,11 +12,13 @@ import io.joshatron.bgt.server.response.GameNotifications;
 import io.joshatron.bgt.server.response.RandomRequestInfo;
 import io.joshatron.bgt.server.response.RequestInfo;
 import io.joshatron.tak.engine.game.Player;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class GameDAO {
 
     public void createGameRequest(UUID requester, List<UUID> others, PlayerIndicator requesterColor, GameParameters gameParameters) throws GameServerException {

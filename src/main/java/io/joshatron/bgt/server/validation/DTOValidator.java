@@ -32,6 +32,14 @@ public class DTOValidator {
         validatePassword(auth.getPassword());
     }
 
+    public static void validateNewUser(NewUser newUser) {
+        if(newUser == null) {
+            throw new GameServerException(ErrorCode.EMPTY_AUTH);
+        }
+        validateUsername(newUser.getUsername());
+        validatePassword(newUser.getPassword());
+    }
+
     public static void validateText(Text text) {
         if(text == null || text.getText() == null) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);

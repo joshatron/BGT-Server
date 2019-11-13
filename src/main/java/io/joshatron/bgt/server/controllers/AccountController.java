@@ -2,18 +2,19 @@ package io.joshatron.bgt.server.controllers;
 
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
-import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.request.NewPassword;
+import io.joshatron.bgt.server.request.NewUser;
 import io.joshatron.bgt.server.request.NewUsername;
 import io.joshatron.bgt.server.utils.AccountUtils;
 import io.joshatron.bgt.server.response.UserInfo;
-import io.joshatron.bgt.server.validation.AccountValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/account", produces = "application/json")
@@ -24,12 +25,12 @@ public class AccountController {
     private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
-    public ResponseEntity register(@RequestBody Auth auth) {
+    public ResponseEntity register(@RequestBody NewUser newUser) {
         try {
             logger.info("Registering user");
-            accountUtils.registerUser(auth);
+            UUID newUserId = accountUtils.registerUser(newUser);
             logger.info("User successfully registered");
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(newUserId.toString(), HttpStatus.OK);
         } catch (Exception e) {
             return ControllerUtils.handleExceptions(e, logger);
         }
@@ -63,13 +64,9 @@ public class AccountController {
     public ResponseEntity authenticate(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Authenticating");
-            if(accountUtils.isAuthenticated(authString)) {
-                logger.info("User successfully authenticated");
-                return new ResponseEntity(HttpStatus.NO_CONTENT);
-            }
-            else {
-                throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-            }
+            accountUtils.isAuthenticated(authString);
+            logger.info("User successfully authenticated");
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return ControllerUtils.handleExceptions(e, logger);
         }

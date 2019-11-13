@@ -4,6 +4,7 @@ import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
+import io.joshatron.bgt.server.request.NewUser;
 import io.joshatron.bgt.server.response.State;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -65,14 +66,14 @@ public class AccountDAO {
         }
     }
 
-    public void createUser(Auth auth) throws GameServerException {
+    public void createUser(NewUser newUser) throws GameServerException {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
 
             User user = new User();
-            user.setUsername(auth.getUsername());
-            user.setPassword(BCrypt.hashpw(auth.getPassword(), BCrypt.gensalt(bcryptRounds)));
+            user.setUsername(newUser.getUsername());
+            user.setPassword(BCrypt.hashpw(newUser.getPassword(), BCrypt.gensalt(bcryptRounds)));
 
             session.save(user);
             transaction.commit();

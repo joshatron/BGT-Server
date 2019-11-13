@@ -2,8 +2,8 @@ package io.joshatron.bgt.server.utils;
 
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
-import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.request.NewPassword;
+import io.joshatron.bgt.server.request.NewUser;
 import io.joshatron.bgt.server.request.NewUsername;
 import io.joshatron.bgt.server.database.AccountDAO;
 import io.joshatron.bgt.server.response.State;
@@ -23,18 +23,15 @@ public class AccountUtils {
     @Autowired
     private AccountValidator accountValidator;
 
-    public boolean isAuthenticated(String authString) {
-        try {
-            accountValidator.verifyCredentials(authString);
-            return true;
-        } catch(Exception e) {
-            return false;
-        }
+    public void isAuthenticated(String authString) {
+        accountValidator.verifyCredentials(authString);
     }
 
-    public void registerUser(Auth rawAuth) {
-        Auth auth = accountValidator.verifyRegistration(rawAuth);
-        accountDAO.createUser(auth);
+    public UUID registerUser(NewUser newUser) {
+        accountValidator.verifyRegistration(newUser);
+        accountDAO.createUser(newUser);
+
+        return accountDAO.getUserFromUsername(newUser.getUsername()).getId();
     }
 
     public void updatePassword(String authString, NewPassword change) {
@@ -61,32 +58,18 @@ public class AccountUtils {
         }
     }
 
-    public UserInfo getUserFromId(String id) {
-        if(id.length() == 0) {
-            throw new GameServerException(ErrorCode.EMPTY_FIELD);
-        }
-
-        try {
-            return new UserInfo(accountDAO.getUserFromId(UUID.fromString(id)));
-        }
-        catch(IllegalArgumentException e) {
-            throw new GameServerException(ErrorCode.INVALID_FORMATTING);
-        }
+    public UserInfo getUserFromId(String idString) {
+        UUID id = DTOValidator.validateId(idString);
+        return new UserInfo(accountDAO.getUserFromId(id));
     }
 
     public UserInfo getUserFromUsername(String username) {
-        if(username.length() == 0) {
-            throw new GameServerException(ErrorCode.EMPTY_FIELD);
-        }
-        if(username.matches("^.*[^a-zA-Z0-9 ].*$")) {
-            throw new GameServerException(ErrorCode.ALPHANUMERIC_ONLY);
-        }
+        DTOValidator.validateUsername(username);
 
         if(AiUtils.isAi(username)) {
             return new UserInfo(username.toUpperCase(), username.toUpperCase(), 0, State.NORMAL);
         }
         else {
-            DTOValidator.validateUsername(username);
             return new UserInfo(accountDAO.getUserFromUsername(username));
         }
     }

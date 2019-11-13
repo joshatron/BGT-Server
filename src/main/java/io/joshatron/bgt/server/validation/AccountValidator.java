@@ -5,6 +5,7 @@ import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.request.NewPassword;
+import io.joshatron.bgt.server.request.NewUser;
 import io.joshatron.bgt.server.request.NewUsername;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,13 +27,11 @@ public class AccountValidator {
         return accountDAO.getUserFromUsername(auth.getUsername()).getId();
     }
 
-    public Auth verifyRegistration(Auth auth) {
-        DTOValidator.validateAuth(auth);
-        if(accountDAO.usernameExists(auth.getUsername())) {
+    public void verifyRegistration(NewUser newUser) {
+        DTOValidator.validateNewUser(newUser);
+        if(accountDAO.usernameExists(newUser.getUsername())) {
             throw new GameServerException(ErrorCode.USERNAME_TAKEN);
         }
-
-        return auth;
     }
 
     public String verifyPassChange(UUID user, NewPassword passChange) {
