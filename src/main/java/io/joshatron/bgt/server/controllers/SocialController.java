@@ -1,6 +1,5 @@
 package io.joshatron.bgt.server.controllers;
 
-import io.joshatron.bgt.server.request.Auth;
 import io.joshatron.bgt.server.request.FriendResponse;
 import io.joshatron.bgt.server.request.Text;
 import io.joshatron.bgt.server.response.MessageInfo;
@@ -25,10 +24,10 @@ public class SocialController {
     private Logger logger = LoggerFactory.getLogger(SocialController.class);
 
     @PostMapping(value = "/request/create/{id}", produces = "application/json")
-    public ResponseEntity requestFriend(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String other) {
+    public ResponseEntity requestFriend(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String other) {
         try {
             logger.info("Creating friend request");
-            socialUtils.createFriendRequest(new Auth(auth), other);
+            socialUtils.createFriendRequest(authString, other);
             logger.info("Successfully created friend request");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -37,10 +36,10 @@ public class SocialController {
     }
 
     @DeleteMapping(value = "/request/cancel/{id}", produces = "application/json")
-    public ResponseEntity cancelFriendRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String other) {
+    public ResponseEntity cancelFriendRequest(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String other) {
         try {
             logger.info("Deleting friend request");
-            socialUtils.deleteFriendRequest(new Auth(auth), other);
+            socialUtils.deleteFriendRequest(authString, other);
             logger.info("Successfully deleted friend request");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -49,10 +48,10 @@ public class SocialController {
     }
 
     @PostMapping(value = "/request/respond/{id}", produces = "application/json")
-    public ResponseEntity respondToRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String id, @RequestBody FriendResponse friendResponse) {
+    public ResponseEntity respondToRequest(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String id, @RequestBody FriendResponse friendResponse) {
         try {
             logger.info("Responding to friend request");
-            socialUtils.respondToFriendRequest(new Auth(auth), id, friendResponse);
+            socialUtils.respondToFriendRequest(authString, id, friendResponse);
             logger.info("Successfully responded to request");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -61,10 +60,10 @@ public class SocialController {
     }
 
     @GetMapping(value = "/request/incoming", produces = "application/json")
-    public ResponseEntity checkIncomingRequests(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity checkIncomingRequests(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Requesting incoming friend requests");
-            UserInfo[] incoming = socialUtils.listIncomingFriendRequests(new Auth(auth));
+            UserInfo[] incoming = socialUtils.listIncomingFriendRequests(authString);
             logger.info("Returning requests");
             return new ResponseEntity<>(incoming, HttpStatus.OK);
         } catch (Exception e) {
@@ -73,10 +72,10 @@ public class SocialController {
     }
 
     @GetMapping(value = "/request/outgoing", produces = "application/json")
-    public ResponseEntity checkOutgoingRequests(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity checkOutgoingRequests(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Requesting outgoing friend requests");
-            UserInfo[] outgoing = socialUtils.listOutgoingFriendRequests(new Auth(auth));
+            UserInfo[] outgoing = socialUtils.listOutgoingFriendRequests(authString);
             logger.info("Returning requests");
             return new ResponseEntity<>(outgoing, HttpStatus.OK);
         } catch (Exception e) {
@@ -85,10 +84,10 @@ public class SocialController {
     }
 
     @DeleteMapping(value = "/user/{id}/unfriend", produces = "application/json")
-    public ResponseEntity unfriend(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String other) {
+    public ResponseEntity unfriend(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String other) {
         try {
             logger.info("Unfriending user");
-            socialUtils.unfriend(new Auth(auth), other);
+            socialUtils.unfriend(authString, other);
             logger.info("User successfully unfriended");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -97,10 +96,10 @@ public class SocialController {
     }
 
     @PostMapping(value = "/user/{id}/block", produces = "application/json")
-    public ResponseEntity blockUser(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String block) {
+    public ResponseEntity blockUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String block) {
         try {
             logger.info("Blocking user");
-            socialUtils.blockUser(new Auth(auth), block);
+            socialUtils.blockUser(authString, block);
             logger.info("User successfully blocked");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -109,10 +108,10 @@ public class SocialController {
     }
 
     @DeleteMapping(value = "/user/{id}/unblock", produces = "application/json")
-    public ResponseEntity unblockUser(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String unblock) {
+    public ResponseEntity unblockUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String unblock) {
         try {
             logger.info("Unblocking user");
-            socialUtils.unblockUser(new Auth(auth), unblock);
+            socialUtils.unblockUser(authString, unblock);
             logger.info("User successfully unblocked");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -121,10 +120,10 @@ public class SocialController {
     }
 
     @GetMapping(value = "/user/{id}/blocked", produces = "application/json")
-    public ResponseEntity isBlocked(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String isBlocked) {
+    public ResponseEntity isBlocked(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String isBlocked) {
         try {
             logger.info("Checking if user is blocked");
-            if(socialUtils.isBlocked(new Auth(auth), isBlocked)) {
+            if(socialUtils.isBlocked(authString, isBlocked)) {
                 logger.info("The user is blocked");
                 throw new GameServerException(ErrorCode.BLOCKED);
             }
@@ -139,10 +138,10 @@ public class SocialController {
 
 
     @GetMapping(value = "/user/friends", produces = "application/json")
-    public ResponseEntity listFriends(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity listFriends(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Getting list of friends");
-            UserInfo[] friends = socialUtils.listFriends(new Auth(auth));
+            UserInfo[] friends = socialUtils.listFriends(authString);
             logger.info("Returning friend list");
             return new ResponseEntity<>(friends, HttpStatus.OK);
         } catch (Exception e) {
@@ -151,10 +150,10 @@ public class SocialController {
     }
 
     @GetMapping(value = "/user/blocking", produces = "application/json")
-    public ResponseEntity listBlocked(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity listBlocked(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Getting list blocking users");
-            UserInfo[] blocked = socialUtils.listBlocked(new Auth(auth));
+            UserInfo[] blocked = socialUtils.listBlocked(authString);
             logger.info("Returning blocking list");
             return new ResponseEntity<>(blocked, HttpStatus.OK);
         } catch (Exception e) {
@@ -163,10 +162,10 @@ public class SocialController {
     }
 
     @PostMapping(value = "/message/send/{id}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity sendMessage(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String id, @RequestBody Text sendMessage) {
+    public ResponseEntity sendMessage(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String id, @RequestBody Text sendMessage) {
         try {
             logger.info("Sending a message");
-            socialUtils.sendMessage(new Auth(auth), id, sendMessage);
+            socialUtils.sendMessage(authString, id, sendMessage);
             logger.info("Message successfully sent");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -175,12 +174,12 @@ public class SocialController {
     }
 
     @GetMapping(value = "/message/search", produces = "application/json")
-    public ResponseEntity readMessages(@RequestHeader(value="Authorization") String auth, @RequestParam(value = "others", required = false) String senders,
+    public ResponseEntity readMessages(@RequestHeader(value="Authorization") String authString, @RequestParam(value = "others", required = false) String senders,
                                        @RequestParam(value = "start", required = false) Long start, @RequestParam(value = "end", required = false) Long end,
                                        @RequestParam(value = "read", required = false) String read, @RequestParam(value = "from", required = false) String from) {
         try {
             logger.info("Reading messages");
-            MessageInfo[] messages = socialUtils.listMessages(new Auth(auth), senders, start, end, read, from);
+            MessageInfo[] messages = socialUtils.listMessages(authString, senders, start, end, read, from);
             logger.info("Messages found, returning");
             return new ResponseEntity<>(messages, HttpStatus.OK);
         } catch (Exception e) {
@@ -189,10 +188,10 @@ public class SocialController {
     }
 
     @GetMapping(value = "/notifications", produces = "application/json")
-    public ResponseEntity getNotifications(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity getNotifications(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Getting social notifications");
-            SocialNotifications notifications = socialUtils.getNotifications(new Auth(auth));
+            SocialNotifications notifications = socialUtils.getNotifications(authString);
             logger.info("Social notifications found, returning");
             return new ResponseEntity<>(notifications, HttpStatus.OK);
         } catch (Exception e) {

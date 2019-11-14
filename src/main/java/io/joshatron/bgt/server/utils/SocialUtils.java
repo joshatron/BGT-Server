@@ -10,7 +10,9 @@ import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.response.MessageInfo;
 import io.joshatron.bgt.server.response.SocialNotifications;
 import io.joshatron.bgt.server.response.UserInfo;
+import io.joshatron.bgt.server.validation.AccountValidator;
 import io.joshatron.bgt.server.validation.DTOValidator;
+import io.joshatron.bgt.server.validation.SocialValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,40 +29,21 @@ public class SocialUtils {
     private SocialDAO socialDAO;
     @Autowired
     private AccountDAO accountDAO;
+    @Autowired
+    private AccountValidator accountValidator;
+    @Autowired
+    private SocialValidator socialValidator;
 
-    public void createFriendRequest(Auth auth, String other) throws GameServerException {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(user.isBlocked(otherId)) {
-            throw new GameServerException(ErrorCode.BLOCKED);
-        }
-        if(user.isBlocking(otherId)) {
-            throw new GameServerException(ErrorCode.BLOCKING);
-        }
-        if(user.isRequestingUser(otherId)) {
-            throw new GameServerException(ErrorCode.ALREADY_REQUESTING);
-        }
-        if(user.isRequestedByUser(otherId)) {
-            throw new GameServerException(ErrorCode.ALREADY_BEING_REQUESTED);
-        }
-        if(user.isFriend(otherId)) {
-            throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
-        }
-        if(user.getId().equals(otherId)) {
-            throw new GameServerException(ErrorCode.REQUESTING_SELF);
-        }
+    public void createFriendRequest(String authString, String other) {
+        UUID userId = accountValidator.verifyCredentials(authString);
+        UUID otherId = accountValidator.verifyUserId(other);
 
-        socialDAO.createFriendRequest(user.getId(), otherId);
+        socialValidator.validateUsersUnrelated(userId, otherId);
+
+        socialDAO.createFriendRequest(userId, otherId);
     }
 
-    public void deleteFriendRequest(Auth auth, String other) throws GameServerException {
+    public void deleteFriendRequest(String authString, String other) {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
         if(!accountDAO.isAuthenticated(auth)) {
@@ -77,7 +60,7 @@ public class SocialUtils {
         socialDAO.deleteFriendRequest(user.getId(), otherId);
     }
 
-    public void respondToFriendRequest(Auth auth, String other, FriendResponse answer) throws GameServerException {
+    public void respondToFriendRequest(String authString, String other, FriendResponse answer) {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
         DTOValidator.validateFriendResponse(answer);
@@ -98,7 +81,7 @@ public class SocialUtils {
         socialDAO.deleteFriendRequest(otherId, user.getId());
     }
 
-    public UserInfo[] listIncomingFriendRequests(Auth auth) throws GameServerException {
+    public UserInfo[] listIncomingFriendRequests(String authString) {
         DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -108,7 +91,7 @@ public class SocialUtils {
         return user.getIncomingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
-    public UserInfo[] listOutgoingFriendRequests(Auth auth) throws GameServerException {
+    public UserInfo[] listOutgoingFriendRequests(String authString) {
         DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -118,7 +101,7 @@ public class SocialUtils {
         return user.getOutgoingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
-    public void unfriend(Auth auth, String other) throws GameServerException {
+    public void unfriend(String authString, String other) {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
         if(!accountDAO.isAuthenticated(auth)) {
@@ -135,7 +118,7 @@ public class SocialUtils {
         socialDAO.unfriend(user.getId(), otherId);
     }
 
-    public void blockUser(Auth auth, String other) throws GameServerException {
+    public void blockUser(String authString, String other) {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
         if(!accountDAO.isAuthenticated(auth)) {
@@ -164,7 +147,7 @@ public class SocialUtils {
         }
     }
 
-    public void unblockUser(Auth auth, String other) throws GameServerException {
+    public void unblockUser(String authString, String other) {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
         if(!accountDAO.isAuthenticated(auth)) {
@@ -181,7 +164,7 @@ public class SocialUtils {
         socialDAO.unblock(user.getId(), otherId);
     }
 
-    public boolean isBlocked(Auth auth, String other) throws GameServerException {
+    public boolean isBlocked(String authString, String other) {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
         if(!accountDAO.isAuthenticated(auth)) {
@@ -194,7 +177,7 @@ public class SocialUtils {
         return user.getBlocked().parallelStream().anyMatch(u -> u.getId().equals(otherId));
     }
 
-    public UserInfo[] listFriends(Auth auth) throws GameServerException {
+    public UserInfo[] listFriends(String authString) {
         DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -204,7 +187,7 @@ public class SocialUtils {
         return Stream.concat(user.getFriends().stream(), user.getFriended().stream()).parallel().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
-    public UserInfo[] listBlocked(Auth auth) throws GameServerException {
+    public UserInfo[] listBlocked(String authString) {
         DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
@@ -214,7 +197,7 @@ public class SocialUtils {
         return user.getBlocking().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
-    public void sendMessage(Auth auth, String other, Text sendMessage) throws GameServerException {
+    public void sendMessage(String authString, String other, Text sendMessage) {
         DTOValidator.validateAuth(auth);
         UUID otherId = DTOValidator.validateId(other);
         DTOValidator.validateText(sendMessage);
@@ -238,7 +221,7 @@ public class SocialUtils {
         socialDAO.sendMessage(user.getId(), otherId, sendMessage.getText(), RecipientType.PLAYER);
     }
 
-    public MessageInfo[] listMessages(Auth auth, String senders, Long startTime, Long endTime, String read, String from) throws GameServerException {
+    public MessageInfo[] listMessages(String authString, String senders, Long startTime, Long endTime, String read, String from) {
         DTOValidator.validateAuth(auth);
         Timestamp start = null;
         if(startTime != null) {
@@ -275,7 +258,7 @@ public class SocialUtils {
         return messages.parallelStream().map(MessageInfo::new).toArray(MessageInfo[]::new);
     }
 
-    public SocialNotifications getNotifications(Auth auth) throws GameServerException {
+    public SocialNotifications getNotifications(String authString) {
         DTOValidator.validateAuth(auth);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);

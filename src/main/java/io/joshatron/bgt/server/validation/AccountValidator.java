@@ -27,6 +27,15 @@ public class AccountValidator {
         return accountDAO.getUserFromUsername(auth.getUsername()).getId();
     }
 
+    public UUID verifyUserId(String idString) {
+        UUID id = UUID.fromString(idString);
+        if(!accountDAO.userExists(id)) {
+            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        return id;
+    }
+
     public void verifyRegistration(NewUser newUser) {
         DTOValidator.validateNewUser(newUser);
         if(accountDAO.usernameExists(newUser.getUsername())) {
@@ -60,21 +69,5 @@ public class AccountValidator {
         }
 
         return userChange.getNewUsername();
-    }
-
-    public Auth validateAuthenticate(String authString) {
-        return DTOValidator.validateAuthString(authString);
-    }
-
-    public void validateFindUser(String username, String id) {
-        if(username != null && id == null) {
-            DTOValidator.validateUsername(username);
-        }
-        else if(id != null && username == null) {
-            DTOValidator.validateId(id);
-        }
-        else {
-            throw new GameServerException(ErrorCode.TOO_MANY_ARGUMENTS);
-        }
     }
 }

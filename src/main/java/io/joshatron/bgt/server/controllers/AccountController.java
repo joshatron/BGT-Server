@@ -1,7 +1,5 @@
 package io.joshatron.bgt.server.controllers;
 
-import io.joshatron.bgt.server.exceptions.ErrorCode;
-import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.NewPassword;
 import io.joshatron.bgt.server.request.NewUser;
 import io.joshatron.bgt.server.request.NewUsername;

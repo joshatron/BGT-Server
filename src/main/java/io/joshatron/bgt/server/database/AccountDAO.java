@@ -28,7 +28,7 @@ public class AccountDAO {
     @Value("${user.login-attempts:0}")
     private Integer maxFailed;
 
-    public boolean isAuthenticated(Auth auth) throws GameServerException {
+    public boolean isAuthenticated(Auth auth) {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
@@ -66,7 +66,7 @@ public class AccountDAO {
         }
     }
 
-    public void createUser(NewUser newUser) throws GameServerException {
+    public void createUser(NewUser newUser) {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
@@ -83,7 +83,7 @@ public class AccountDAO {
         }
     }
 
-    public void updatePassword(UUID userId, String password) throws GameServerException {
+    public void updatePassword(UUID userId, String password) {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
@@ -96,7 +96,7 @@ public class AccountDAO {
         }
     }
 
-    public void updateUsername(UUID userId, String username) throws GameServerException {
+    public void updateUsername(UUID userId, String username) {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
@@ -109,7 +109,7 @@ public class AccountDAO {
         }
     }
 
-    public void updateRating(UUID userId, int rating) throws GameServerException {
+    public void updateRating(UUID userId, int rating) {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
@@ -122,7 +122,7 @@ public class AccountDAO {
         }
     }
 
-    public void updateState(UUID userId, State state) throws GameServerException {
+    public void updateState(UUID userId, State state) {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
@@ -135,7 +135,7 @@ public class AccountDAO {
         }
     }
 
-    public boolean userExists(UUID userId) throws GameServerException {
+    public boolean userExists(UUID userId) {
         try {
             getUserFromId(userId);
             return true;
@@ -144,7 +144,7 @@ public class AccountDAO {
         }
     }
 
-    public boolean usernameExists(String username) throws GameServerException {
+    public boolean usernameExists(String username) {
         try {
             getUserFromUsername(username);
             return true;
@@ -153,7 +153,7 @@ public class AccountDAO {
         }
     }
 
-    public User getUserFromId(UUID id) throws GameServerException {
+    public User getUserFromId(UUID id) {
         try {
             Session session = sessionFactory.getCurrentSession();
             return getUserFromId(session, id);
@@ -163,7 +163,7 @@ public class AccountDAO {
         }
     }
 
-    public User getUserFromId(Session session, UUID userId) throws GameServerException {
+    private User getUserFromId(Session session, UUID userId) {
         Query<User> query = session.createQuery("from User u where u.id=:id", User.class);
         query.setParameter("id", userId);
         List<User> users = query.list();
@@ -176,7 +176,7 @@ public class AccountDAO {
         return users.get(0);
     }
 
-    public User getUserFromUsername(String username) throws GameServerException {
+    public User getUserFromUsername(String username) {
         try {
             Session session = sessionFactory.getCurrentSession();
             return getUserFromUsername(session, username);
@@ -186,7 +186,7 @@ public class AccountDAO {
         }
     }
 
-    private User getUserFromUsername(Session session, String username) throws GameServerException {
+    private User getUserFromUsername(Session session, String username) {
         Query<User> query = session.createQuery("from User u where lower(u.username)=:username", User.class);
         query.setParameter("username", username.toLowerCase());
         List<User> users = query.list();
