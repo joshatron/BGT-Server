@@ -87,10 +87,12 @@ public class DTOValidator {
         }
     }
 
-    public static void validateFriendResponse(FriendResponse response) {
+    public static Answer validateFriendResponse(FriendResponse response) {
         if(response == null || response.getResponse() == null) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
+
+        return response.getResponse();
     }
 
     public static Answer validateAnswer(String response) {

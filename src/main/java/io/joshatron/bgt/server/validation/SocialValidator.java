@@ -27,6 +27,11 @@ public class SocialValidator {
         validateNotFriends(user, other);
     }
 
+    public void validateUserRequesting(UUID requester, UUID other) {
+        User user = accountDAO.getUserFromId(requester);
+        validateRequesting(user, other);
+    }
+
     private void validateUsersNotSame(UUID requester, UUID other) {
         if(requester.equals(other)) {
             throw new GameServerException(ErrorCode.REFERENCING_SELF);
@@ -48,6 +53,12 @@ public class SocialValidator {
     private void validateNotRequesting(User requester, UUID other) {
         if(requester.isRequestingUser(other)) {
             throw new GameServerException(ErrorCode.ALREADY_REQUESTING);
+        }
+    }
+
+    private void validateRequesting(User requester, UUID other) {
+        if(!requester.isRequestingUser(other)) {
+            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }
     }
 

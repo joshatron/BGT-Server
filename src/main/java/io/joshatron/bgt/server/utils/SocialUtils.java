@@ -44,60 +44,38 @@ public class SocialUtils {
     }
 
     public void deleteFriendRequest(String authString, String other) {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(!user.isRequestingUser(otherId)) {
-            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
-        }
+        UUID userId = accountValidator.verifyCredentials(authString);
+        UUID otherId = accountValidator.verifyUserId(other);
 
-        socialDAO.deleteFriendRequest(user.getId(), otherId);
+        socialValidator.validateUserRequesting(userId, otherId);
+
+        socialDAO.deleteFriendRequest(userId, otherId);
     }
 
-    public void respondToFriendRequest(String authString, String other, FriendResponse answer) {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        DTOValidator.validateFriendResponse(answer);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(!user.isRequestedByUser(otherId)) {
-            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
-        }
+    public void respondToFriendRequest(String authString, String other, FriendResponse response) {
+        UUID userId = accountValidator.verifyCredentials(authString);
+        UUID otherId = accountValidator.verifyUserId(other);
+        Answer answer = DTOValidator.validateFriendResponse(response);
 
-        if(answer.getResponse() == Answer.ACCEPT) {
-            socialDAO.makeFriends(otherId, user.getId());
+        socialValidator.validateUserRequesting(otherId, userId);
+
+        if(answer == Answer.ACCEPT) {
+            socialDAO.makeFriends(otherId, userId);
         }
-        socialDAO.deleteFriendRequest(otherId, user.getId());
+        socialDAO.deleteFriendRequest(otherId, userId);
     }
 
     public UserInfo[] listIncomingFriendRequests(String authString) {
-        DTOValidator.validateAuth(auth);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UUID userId = accountValidator.verifyCredentials(authString);
 
+        User user = accountDAO.getUserFromId(userId);
         return user.getIncomingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public UserInfo[] listOutgoingFriendRequests(String authString) {
-        DTOValidator.validateAuth(auth);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        UUID userId = accountValidator.verifyCredentials(authString);
 
+        User user = accountDAO.getUserFromId(userId);
         return user.getOutgoingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
