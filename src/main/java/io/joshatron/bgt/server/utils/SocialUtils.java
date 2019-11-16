@@ -80,66 +80,33 @@ public class SocialUtils {
     }
 
     public void unfriend(String authString, String other) {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(!user.isFriend(otherId)) {
-            throw new GameServerException(ErrorCode.FRIEND_NOT_FOUND);
-        }
+        UUID userId = accountValidator.verifyCredentials(authString);
+        UUID otherId = accountValidator.verifyUserId(other);
 
-        socialDAO.unfriend(user.getId(), otherId);
+        socialValidator.validateFriends(userId, otherId);
+
+        socialDAO.unfriend(userId, otherId);
     }
 
     public void blockUser(String authString, String other) {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(user.isBlocking(otherId)) {
-            throw new GameServerException(ErrorCode.ALREADY_BLOCKING);
-        }
-        if(user.getId().equals(otherId)) {
-            throw new GameServerException(ErrorCode.BLOCKING_SELF);
-        }
+        UUID userId = accountValidator.verifyCredentials(authString);
+        UUID otherId = accountValidator.verifyUserId(other);
 
-        socialDAO.block(user.getId(), otherId);
-        if(user.isFriend(otherId)) {
-            socialDAO.unfriend(user.getId(), otherId);
-        }
-        if(user.isRequestingUser(otherId)) {
-            socialDAO.deleteFriendRequest(user.getId(), otherId);
-        }
-        if(user.isRequestedByUser(otherId)) {
-            socialDAO.deleteFriendRequest(otherId, user.getId());
-        }
+        socialValidator.validateBlockable(userId, otherId);
+
+        socialDAO.block(userId, otherId);
+        socialDAO.unfriend(userId, otherId);
+        socialDAO.deleteFriendRequest(userId, otherId);
+        socialDAO.deleteFriendRequest(otherId, userId);
     }
 
     public void unblockUser(String authString, String other) {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(!user.isBlocking(otherId)) {
-            throw new GameServerException(ErrorCode.NOT_BLOCKING);
-        }
+        UUID userId = accountValidator.verifyCredentials(authString);
+        UUID otherId = accountValidator.verifyUserId(other);
 
-        socialDAO.unblock(user.getId(), otherId);
+        socialValidator.validateBlocking(userId, otherId);
+
+        socialDAO.unblock(userId, otherId);
     }
 
     public boolean isBlocked(String authString, String other) {

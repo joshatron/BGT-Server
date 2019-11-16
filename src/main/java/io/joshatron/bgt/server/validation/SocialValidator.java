@@ -32,6 +32,22 @@ public class SocialValidator {
         validateRequesting(user, other);
     }
 
+    public void validateFriends(UUID requester, UUID other) {
+        User user = accountDAO.getUserFromId(requester);
+        validateFriends(user, other);
+    }
+
+    public void validateBlockable(UUID requester, UUID other) {
+        User user = accountDAO.getUserFromId(requester);
+        validateNotBlocking(user, other);
+        validateUsersNotSame(requester, other);
+    }
+
+    public void validateBlocking(UUID requester, UUID other) {
+        User user = accountDAO.getUserFromId(requester);
+        validateBlocking(user, other);
+    }
+
     private void validateUsersNotSame(UUID requester, UUID other) {
         if(requester.equals(other)) {
             throw new GameServerException(ErrorCode.REFERENCING_SELF);
@@ -47,6 +63,12 @@ public class SocialValidator {
     private void validateNotBlocking(User requester, UUID other) {
         if(requester.isBlocking(other)) {
             throw new GameServerException(ErrorCode.BLOCKING);
+        }
+    }
+
+    private void validateBlocking(User requester, UUID other) {
+        if(!requester.isBlocking(other)) {
+            throw new GameServerException(ErrorCode.NOT_BLOCKING);
         }
     }
 
@@ -71,6 +93,12 @@ public class SocialValidator {
     private void validateNotFriends(User requester, UUID other) {
         if(requester.isFriend(other)) {
             throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
+        }
+    }
+
+    private void validateFriends(User requester, UUID other) {
+        if(!requester.isFriend(other)) {
+            throw new GameServerException(ErrorCode.FRIEND_NOT_FOUND);
         }
     }
 }
