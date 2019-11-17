@@ -34,79 +34,77 @@ public class SocialUtils {
     @Autowired
     private SocialValidator socialValidator;
 
-    public void createFriendRequest(String authString, String other) {
-        UUID userId = accountValidator.verifyCredentials(authString);
-        UUID otherId = accountValidator.verifyUserId(other);
+    public void createFriendRequest(String authString, String otherId) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
 
-        socialValidator.validateUsersUnrelated(userId, otherId);
+        socialValidator.validateUsersUnrelated(user, other);
 
-        socialDAO.createFriendRequest(userId, otherId);
+        socialDAO.createFriendRequest(user.getId(), other.getId());
     }
 
-    public void deleteFriendRequest(String authString, String other) {
-        UUID userId = accountValidator.verifyCredentials(authString);
-        UUID otherId = accountValidator.verifyUserId(other);
+    public void deleteFriendRequest(String authString, String otherId) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
 
-        socialValidator.validateUserRequesting(userId, otherId);
+        socialValidator.validateRequesting(user, other.getId());
 
-        socialDAO.deleteFriendRequest(userId, otherId);
+        socialDAO.deleteFriendRequest(user.getId(), other.getId());
     }
 
-    public void respondToFriendRequest(String authString, String other, FriendResponse response) {
-        UUID userId = accountValidator.verifyCredentials(authString);
-        UUID otherId = accountValidator.verifyUserId(other);
+    public void respondToFriendRequest(String authString, String otherId, FriendResponse response) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
         Answer answer = DTOValidator.validateFriendResponse(response);
 
-        socialValidator.validateUserRequesting(otherId, userId);
+        socialValidator.validateRequesting(other, user.getId());
 
         if(answer == Answer.ACCEPT) {
-            socialDAO.makeFriends(otherId, userId);
+            socialDAO.makeFriends(other.getId(), user.getId());
         }
-        socialDAO.deleteFriendRequest(otherId, userId);
+        socialDAO.deleteFriendRequest(other.getId(), user.getId());
     }
 
     public UserInfo[] listIncomingFriendRequests(String authString) {
-        UUID userId = accountValidator.verifyCredentials(authString);
+        User user = accountValidator.verifyCredentials(authString);
 
-        User user = accountDAO.getUserFromId(userId);
         return user.getIncomingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
     public UserInfo[] listOutgoingFriendRequests(String authString) {
-        UUID userId = accountValidator.verifyCredentials(authString);
+        User user = accountValidator.verifyCredentials(authString);
 
-        User user = accountDAO.getUserFromId(userId);
         return user.getOutgoingFriendRequests().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
     }
 
-    public void unfriend(String authString, String other) {
-        UUID userId = accountValidator.verifyCredentials(authString);
-        UUID otherId = accountValidator.verifyUserId(other);
+    public void unfriend(String authString, String otherId) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
 
-        socialValidator.validateFriends(userId, otherId);
+        socialValidator.validateFriends(user, other.getId());
 
-        socialDAO.unfriend(userId, otherId);
+        socialDAO.unfriend(user.getId(), other.getId());
     }
 
-    public void blockUser(String authString, String other) {
-        UUID userId = accountValidator.verifyCredentials(authString);
-        UUID otherId = accountValidator.verifyUserId(other);
+    public void blockUser(String authString, String otherId) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
 
-        socialValidator.validateBlockable(userId, otherId);
+        socialValidator.validateBlockable(user, other.getId());
 
-        socialDAO.block(userId, otherId);
-        socialDAO.unfriend(userId, otherId);
-        socialDAO.deleteFriendRequest(userId, otherId);
-        socialDAO.deleteFriendRequest(otherId, userId);
+        socialDAO.block(user.getId(), other.getId());
+        socialDAO.unfriend(user.getId(), other.getId());
+        socialDAO.deleteFriendRequest(user.getId(), other.getId());
+        socialDAO.deleteFriendRequest(other.getId(), user.getId());
     }
 
-    public void unblockUser(String authString, String other) {
-        UUID userId = accountValidator.verifyCredentials(authString);
-        UUID otherId = accountValidator.verifyUserId(other);
+    public void unblockUser(String authString, String otherId) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
 
-        socialValidator.validateBlocking(userId, otherId);
+        socialValidator.validateBlocking(user, other.getId());
 
-        socialDAO.unblock(userId, otherId);
+        socialDAO.unblock(user.getId(), other.getId());
     }
 
     public boolean isBlocked(String authString, String other) {

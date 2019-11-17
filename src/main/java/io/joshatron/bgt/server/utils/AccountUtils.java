@@ -1,5 +1,6 @@
 package io.joshatron.bgt.server.utils;
 
+import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.NewPassword;
@@ -35,15 +36,15 @@ public class AccountUtils {
     }
 
     public void updatePassword(String authString, NewPassword change) {
-        UUID user = accountValidator.verifyCredentials(authString);
+        User user = accountValidator.verifyCredentials(authString);
         String newPass = accountValidator.verifyPassChange(user, change);
-        accountDAO.updatePassword(user, newPass);
+        accountDAO.updatePassword(user.getId(), newPass);
     }
 
     public void updateUsername(String authString, NewUsername change) {
-        UUID user = accountValidator.verifyCredentials(authString);
+        User user = accountValidator.verifyCredentials(authString);
         String newUsername = accountValidator.verifyUsernameChange(user, change);
-        accountDAO.updateUsername(user, newUsername);
+        accountDAO.updateUsername(user.getId(), newUsername);
     }
 
     public UserInfo getUserFromUsernameOrId(String username, String id) {

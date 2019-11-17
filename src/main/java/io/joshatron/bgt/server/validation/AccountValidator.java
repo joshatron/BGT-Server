@@ -1,6 +1,7 @@
 package io.joshatron.bgt.server.validation;
 
 import io.joshatron.bgt.server.database.AccountDAO;
+import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Auth;
@@ -18,22 +19,22 @@ public class AccountValidator {
     @Autowired
     private AccountDAO accountDAO;
 
-    public UUID verifyCredentials(String authString) {
+    public User verifyCredentials(String authString) {
         Auth auth = DTOValidator.validateAuthString(authString);
         if(!accountDAO.isAuthenticated(auth)) {
             throw new GameServerException(ErrorCode.INCORRECT_AUTH);
         }
 
-        return accountDAO.getUserFromUsername(auth.getUsername()).getId();
+        return accountDAO.getUserFromUsername(auth.getUsername());
     }
 
-    public UUID verifyUserId(String idString) {
+    public User verifyUserId(String idString) {
         UUID id = UUID.fromString(idString);
-        if(!accountDAO.userExists(id)) {
+        try {
+            return accountDAO.getUserFromId(id);
+        } catch(GameServerException e) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
-
-        return id;
     }
 
     public void verifyRegistration(NewUser newUser) {
@@ -43,12 +44,12 @@ public class AccountValidator {
         }
     }
 
-    public String verifyPassChange(UUID user, NewPassword passChange) {
+    public String verifyPassChange(User user, NewPassword passChange) {
         if(passChange == null || passChange.getNewPassword() == null || passChange.getNewPassword().isEmpty()) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
 
-        Auth testAuth = new Auth(accountDAO.getUserFromId(user).getUsername(), passChange.getNewPassword());
+        Auth testAuth = new Auth(user.getUsername(), passChange.getNewPassword());
         if(accountDAO.isAuthenticated(testAuth)) {
             throw new GameServerException(ErrorCode.SAME_PASSWORD);
         }
@@ -56,12 +57,12 @@ public class AccountValidator {
         return passChange.getNewPassword();
     }
 
-    public String verifyUsernameChange(UUID user, NewUsername userChange) {
+    public String verifyUsernameChange(User user, NewUsername userChange) {
         if(userChange == null || userChange.getNewUsername() == null || userChange.getNewUsername().isEmpty()) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
 
-        if(accountDAO.getUserFromId(user).getUsername().equals(userChange.getNewUsername())) {
+        if(user.getUsername().equals(userChange.getNewUsername())) {
             throw new GameServerException(ErrorCode.SAME_USERNAME);
         }
         if(accountDAO.usernameExists(userChange.getNewUsername())) {
