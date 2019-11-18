@@ -28,11 +28,10 @@ public class AccountUtils {
         accountValidator.verifyCredentials(authString);
     }
 
-    public UUID registerUser(NewUser newUser) {
+    public void registerUser(NewUser newUser) {
         accountValidator.verifyRegistration(newUser);
-        accountDAO.createUser(newUser);
 
-        return accountDAO.getUserFromUsername(newUser.getUsername()).getId();
+        accountDAO.createUser(newUser);
     }
 
     public void updatePassword(String authString, NewPassword change) {

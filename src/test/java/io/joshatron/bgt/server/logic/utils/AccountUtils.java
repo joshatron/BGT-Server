@@ -18,7 +18,7 @@ public class AccountUtils {
             response = HttpUtils.createUser(test + user, password, client);
         }
         Assert.assertEquals(response.getStatus(), expected);
-        if(expected == HttpStatus.SC_OK) {
+        if(expected == HttpStatus.SC_NO_CONTENT) {
             UserInfo info = seachUsers(test + user, null, client, HttpStatus.SC_OK);
             User u = new User(test + user, password, info.getUserId());
             authenticate(u, client, HttpStatus.SC_NO_CONTENT);

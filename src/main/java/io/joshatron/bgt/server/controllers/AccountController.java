@@ -26,9 +26,9 @@ public class AccountController {
     public ResponseEntity register(@RequestBody NewUser newUser) {
         try {
             logger.info("Registering user");
-            UUID newUserId = accountUtils.registerUser(newUser);
+            accountUtils.registerUser(newUser);
             logger.info("User successfully registered");
-            return new ResponseEntity<>(newUserId.toString(), HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return ControllerUtils.handleExceptions(e, logger);
         }

@@ -40,10 +40,15 @@ public class DTOValidator {
         validatePassword(newUser.getPassword());
     }
 
-    public static void validateText(Text text) {
-        if(text == null || text.getText() == null) {
+    public static String validateText(Text text) {
+        if(text == null || text.getText() == null || text.getText().isEmpty()) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
+        if(text.getText().length() > 5000) {
+            throw new GameServerException(ErrorCode.MESSAGE_TOO_LONG);
+        }
+
+        return text.getText();
     }
 
     public static void validateNewPassword(NewPassword newPassword) {

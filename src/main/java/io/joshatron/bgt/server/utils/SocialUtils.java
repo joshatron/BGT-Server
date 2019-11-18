@@ -107,65 +107,48 @@ public class SocialUtils {
         socialDAO.unblock(user.getId(), other.getId());
     }
 
-    public boolean isBlocked(String authString, String other) {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        return user.getBlocked().parallelStream().anyMatch(u -> u.getId().equals(otherId));
+    public boolean isBlocked(String authString, String otherId) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
+
+        return user.getBlocked()
+                .parallelStream()
+                .anyMatch(u -> u.getId().equals(other.getId()));
     }
 
     public UserInfo[] listFriends(String authString) {
-        DTOValidator.validateAuth(auth);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        User user = accountValidator.verifyCredentials(authString);
 
-        return Stream.concat(user.getFriends().stream(), user.getFriended().stream()).parallel().map(UserInfo::new).toArray(UserInfo[]::new);
+        return Stream
+                .concat(
+                        user.getFriends().stream(),
+                        user.getFriended().stream())
+                .parallel()
+                .map(UserInfo::new)
+                .toArray(UserInfo[]::new);
     }
 
     public UserInfo[] listBlocked(String authString) {
-        DTOValidator.validateAuth(auth);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        User user = accountValidator.verifyCredentials(authString);
 
-        return user.getBlocking().parallelStream().map(UserInfo::new).toArray(UserInfo[]::new);
+        return user.getBlocking()
+                .parallelStream()
+                .map(UserInfo::new)
+                .toArray(UserInfo[]::new);
     }
 
-    public void sendMessage(String authString, String other, Text sendMessage) {
-        DTOValidator.validateAuth(auth);
-        UUID otherId = DTOValidator.validateId(other);
-        DTOValidator.validateText(sendMessage);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(user.isBlocked(otherId)) {
-            throw new GameServerException(ErrorCode.BLOCKED);
-        }
-        if(sendMessage.getText().length() == 0) {
-            throw new GameServerException(ErrorCode.EMPTY_FIELD);
-        }
-        if(sendMessage.getText().length() > 5000) {
-            throw new GameServerException(ErrorCode.MESSAGE_TOO_LONG);
-        }
+    public void sendMessage(String authString, String otherId, Text sendMessage) {
+        User user = accountValidator.verifyCredentials(authString);
+        User other = accountValidator.verifyUserId(otherId);
+        String messageBody = DTOValidator.validateText(sendMessage);
 
-        socialDAO.sendMessage(user.getId(), otherId, sendMessage.getText(), RecipientType.PLAYER);
+        socialValidator.validateNotBlocked(user, other.getId());
+
+        socialDAO.sendMessage(user.getId(), other.getId(), messageBody, RecipientType.PLAYER);
     }
 
     public MessageInfo[] listMessages(String authString, String senders, Long startTime, Long endTime, String read, String from) {
-        DTOValidator.validateAuth(auth);
+        User user = accountValidator.verifyCredentials(authString);
         Timestamp start = null;
         if(startTime != null) {
             start = new Timestamp(startTime);
@@ -174,11 +157,6 @@ public class SocialUtils {
         if(endTime != null) {
             end = new Timestamp(endTime);
         }
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        Read rd = DTOValidator.validateRead(read);
         List<UUID> users = new ArrayList<>();
         if(senders != null && senders.length() > 0) {
             for (String u : senders.split(",")) {
@@ -188,6 +166,7 @@ public class SocialUtils {
         if(start != null && end != null && start.after(end)) {
             throw new GameServerException(ErrorCode.INVALID_DATE);
         }
+        Read rd = DTOValidator.validateRead(read);
         From frm = DTOValidator.validateFrom(from);
 
         List<Message> messages = socialDAO.listMessages(user.getId(), users, start, end, rd, frm, RecipientType.PLAYER);
@@ -202,11 +181,7 @@ public class SocialUtils {
     }
 
     public SocialNotifications getNotifications(String authString) {
-        DTOValidator.validateAuth(auth);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+        User user = accountValidator.verifyCredentials(authString);
 
         return socialDAO.getSocialNotifications(user.getId());
     }
