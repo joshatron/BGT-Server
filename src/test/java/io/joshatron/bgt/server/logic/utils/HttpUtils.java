@@ -220,7 +220,7 @@ public class HttpUtils {
     }
 
     public static Response respondToRequest(String username, String password, String other, String answer, HttpClient client) throws IOException {
-        String payload = "{\"text\": \"" + answer + "\"}";
+        String payload = "{\"response\": \"" + answer + "\"}";
 
         HttpPost request = new HttpPost(baseUrl + "/social/request/respond/" + other);
         if(username != null && password != null) {
