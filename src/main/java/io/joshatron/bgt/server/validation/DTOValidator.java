@@ -51,10 +51,12 @@ public class DTOValidator {
         return text.getText();
     }
 
-    public static void validateNewPassword(NewPassword newPassword) {
-        if(newPassword == null || newPassword.getNewPassword() == null) {
+    public static String validateNewPassword(NewPassword newPassword) {
+        if(newPassword == null || newPassword.getNewPassword() == null || newPassword.getNewPassword().isEmpty()) {
             throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
+
+        return newPassword.getNewPassword();
     }
 
     public static void validateNewUsername(NewUsername newUsername) {

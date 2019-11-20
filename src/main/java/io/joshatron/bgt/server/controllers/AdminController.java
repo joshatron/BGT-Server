@@ -1,6 +1,6 @@
 package io.joshatron.bgt.server.controllers;
 
-import io.joshatron.bgt.server.request.Auth;
+import io.joshatron.bgt.server.request.NewPassword;
 import io.joshatron.bgt.server.request.Text;
 import io.joshatron.bgt.server.utils.AdminUtils;
 import org.slf4j.Logger;
@@ -31,10 +31,10 @@ public class AdminController {
     }
 
     @PostMapping(value = "/change-pass", consumes = "application/json")
-    public ResponseEntity changePassword(@RequestHeader(value="Authorization") String auth, @RequestBody Text passChange) {
+    public ResponseEntity changePassword(@RequestHeader(value="Authorization") String authString, @RequestBody NewPassword passChange) {
         try {
             logger.info("Changing admin password");
-            adminUtils.changePassword(new Auth(auth), passChange);
+            adminUtils.changePassword(authString, passChange);
             logger.info("Admin password successfully changed");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -43,10 +43,10 @@ public class AdminController {
     }
 
     @PostMapping(value = "/user/{id}/reset", produces = "application/json")
-    public ResponseEntity resetUserPassword(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String userToChange) {
+    public ResponseEntity resetUserPassword(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToChange) {
         try {
             logger.info("Resetting user password");
-            String newPass = adminUtils.resetUserPassword(new Auth(auth), userToChange);
+            String newPass = adminUtils.resetUserPassword(authString, userToChange);
             logger.info("User password successfully reset");
             return new ResponseEntity<>(new Text(newPass), HttpStatus.OK);
         } catch (Exception e) {
@@ -55,10 +55,10 @@ public class AdminController {
     }
 
     @PostMapping(value = "/user/{id}/ban", produces = "application/json")
-    public ResponseEntity banUser(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String userToBan) {
+    public ResponseEntity banUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToBan) {
         try {
             logger.info("Banning user");
-            adminUtils.banUser(new Auth(auth), userToBan);
+            adminUtils.banUser(authString, userToBan);
             logger.info("User successfully banned");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -67,10 +67,10 @@ public class AdminController {
     }
 
     @PostMapping(value = "/user/{id}/unban", produces = "application/json")
-    public ResponseEntity unbanUser(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String userToUnban) {
+    public ResponseEntity unbanUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToUnban) {
         try {
             logger.info("Unbanning user");
-            adminUtils.unbanUser(new Auth(auth), userToUnban);
+            adminUtils.unbanUser(authString, userToUnban);
             logger.info("User successfully unbanned");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -79,10 +79,10 @@ public class AdminController {
     }
 
     @PostMapping(value = "/user/{id}/unlock", produces = "application/json")
-    public ResponseEntity unlockUser(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String userToUnlock) {
+    public ResponseEntity unlockUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToUnlock) {
         try {
             logger.info("Unlocking user");
-            adminUtils.unlockUser(new Auth(auth), userToUnlock);
+            adminUtils.unlockUser(authString, userToUnlock);
             logger.info("User successfully unlocked");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
