@@ -2,6 +2,7 @@ package io.joshatron.bgt.server.controllers;
 
 import io.joshatron.bgt.server.request.NewPassword;
 import io.joshatron.bgt.server.request.Text;
+import io.joshatron.bgt.server.response.State;
 import io.joshatron.bgt.server.utils.AdminUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public class AdminController {
     public ResponseEntity banUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToBan) {
         try {
             logger.info("Banning user");
-            adminUtils.banUser(authString, userToBan);
+            adminUtils.setUserState(authString, userToBan, State.BANNED);
             logger.info("User successfully banned");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -70,7 +71,7 @@ public class AdminController {
     public ResponseEntity unbanUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToUnban) {
         try {
             logger.info("Unbanning user");
-            adminUtils.unbanUser(authString, userToUnban);
+            adminUtils.setUserState(authString, userToUnban, State.NORMAL);
             logger.info("User successfully unbanned");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -82,7 +83,7 @@ public class AdminController {
     public ResponseEntity unlockUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToUnlock) {
         try {
             logger.info("Unlocking user");
-            adminUtils.unlockUser(authString, userToUnlock);
+            adminUtils.setUserState(authString, userToUnlock, State.NORMAL);
             logger.info("User successfully unlocked");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
