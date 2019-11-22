@@ -735,7 +735,7 @@ public class HttpUtils {
     }
 
     public static Response changeAdminPassword(String username, String password, String newPass, HttpClient client) throws IOException {
-        String payload = "{\"text\": \"" + newPass + "\"}";
+        String payload = "{\"newPassword\": \"" + newPass + "\"}";
 
         HttpPost request = new HttpPost(baseUrl + "/admin/change-pass");
         if(username != null && password != null) {

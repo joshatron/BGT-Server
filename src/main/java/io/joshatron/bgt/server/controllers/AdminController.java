@@ -59,7 +59,7 @@ public class AdminController {
     public ResponseEntity banUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToBan) {
         try {
             logger.info("Banning user");
-            adminUtils.setUserState(authString, userToBan, State.BANNED);
+            adminUtils.setUserState(authString, userToBan, null, State.BANNED);
             logger.info("User successfully banned");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class AdminController {
     public ResponseEntity unbanUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToUnban) {
         try {
             logger.info("Unbanning user");
-            adminUtils.setUserState(authString, userToUnban, State.NORMAL);
+            adminUtils.setUserState(authString, userToUnban, State.BANNED, State.NORMAL);
             logger.info("User successfully unbanned");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -83,7 +83,7 @@ public class AdminController {
     public ResponseEntity unlockUser(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String userToUnlock) {
         try {
             logger.info("Unlocking user");
-            adminUtils.setUserState(authString, userToUnlock, State.NORMAL);
+            adminUtils.setUserState(authString, userToUnlock, State.LOCKED, State.NORMAL);
             logger.info("User successfully unlocked");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

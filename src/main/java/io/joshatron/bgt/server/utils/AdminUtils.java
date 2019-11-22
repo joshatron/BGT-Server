@@ -60,14 +60,17 @@ public class AdminUtils {
         return newPass;
     }
 
-    public void setUserState(String authString, String userToBan, State state) {
+    public void setUserState(String authString, String userToSet, State startState, State endState) {
         adminValidator.verifyCredentials(authString);
-        User user = accountValidator.verifyUserId(userToBan);
+        User user = accountValidator.verifyUserId(userToSet);
 
-        if(user.getState() == state) {
+        if(user.getState() == endState) {
             throw new GameServerException(ErrorCode.ALREADY_IN_STATE);
         }
+        if(startState != null && user.getState() != startState) {
+            throw new GameServerException(ErrorCode.WRONG_INITIAL_STATE);
+        }
 
-        accountDAO.updateState(user.getId(), state);
+        accountDAO.updateState(user.getId(), endState);
     }
 }
