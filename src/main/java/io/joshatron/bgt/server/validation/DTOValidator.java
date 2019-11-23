@@ -1,5 +1,6 @@
 package io.joshatron.bgt.server.validation;
 
+import io.joshatron.bgt.engine.player.PlayerIndicator;
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.tak.engine.game.Player;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
@@ -132,19 +133,13 @@ public class DTOValidator {
         throw new GameServerException(ErrorCode.INVALID_FORMATTING);
     }
 
-    public static Player validatePlayer(String player) {
-        if(player == null || player.length() == 0) {
-            return Player.NONE;
+    public static PlayerIndicator validatePlayerIndicator(String playerIndicator) {
+        if(playerIndicator == null || playerIndicator.length() == 0) {
+            throw new GameServerException(ErrorCode.EMPTY_FIELD);
         }
 
-        if(player.equalsIgnoreCase("black")) {
-            return Player.BLACK;
-        }
-        else if(player.equalsIgnoreCase("white")) {
-            return Player.WHITE;
-        }
-
-        throw new GameServerException(ErrorCode.INVALID_FORMATTING);
+        //TODO: fix to use from string and handle exception
+        return PlayerIndicator.valueOf(playerIndicator);
     }
 
     public static Complete validateComplete(String complete) {

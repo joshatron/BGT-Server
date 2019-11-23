@@ -21,10 +21,10 @@ public class GameController {
     private Logger logger = LoggerFactory.getLogger(GameController.class);
 
     @PostMapping(value = "/request/create", produces = "application/json")
-    public ResponseEntity requestGame(@RequestHeader(value="Authorization") String auth, @RequestBody GameRequest gameRequest) {
+    public ResponseEntity requestGame(@RequestHeader(value="Authorization") String authString, @RequestBody GameRequest gameRequest) {
         try {
             logger.info("Requesting new game");
-            gameUtils.requestGame(new Auth(auth), "", gameRequest);
+            gameUtils.requestGame(authString, gameRequest);
             logger.info("Request successfully made");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

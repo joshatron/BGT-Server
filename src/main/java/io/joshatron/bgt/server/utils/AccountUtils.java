@@ -7,7 +7,6 @@ import io.joshatron.bgt.server.request.NewPassword;
 import io.joshatron.bgt.server.request.NewUser;
 import io.joshatron.bgt.server.request.NewUsername;
 import io.joshatron.bgt.server.database.AccountDAO;
-import io.joshatron.bgt.server.response.State;
 import io.joshatron.bgt.server.response.UserInfo;
 import io.joshatron.bgt.server.validation.AccountValidator;
 import io.joshatron.bgt.server.validation.DTOValidator;
@@ -66,11 +65,6 @@ public class AccountUtils {
     public UserInfo getUserFromUsername(String username) {
         DTOValidator.validateUsername(username);
 
-        if(AiUtils.isAi(username)) {
-            return new UserInfo(username.toUpperCase(), username.toUpperCase(), 0, State.NORMAL);
-        }
-        else {
-            return new UserInfo(accountDAO.getUserFromUsername(username));
-        }
+        return new UserInfo(accountDAO.getUserFromUsername(username));
     }
 }
