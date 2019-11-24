@@ -6,6 +6,7 @@ import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.response.*;
 import io.joshatron.bgt.server.validation.AccountValidator;
 import io.joshatron.bgt.server.validation.DTOValidator;
+import io.joshatron.bgt.server.validation.SocialValidator;
 import io.joshatron.tak.engine.exception.TakEngineException;
 import io.joshatron.tak.engine.game.GameResult;
 import io.joshatron.tak.engine.game.GameState;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +39,8 @@ public class GameUtils {
     private AccountDAO accountDAO;
     @Autowired
     private AccountValidator accountValidator;
+    @Autowired
+    private SocialValidator socialValidator;
 
     @Value("${game.forfeit-days:0}")
     private Integer daysToForfeit;
@@ -45,12 +49,8 @@ public class GameUtils {
         User user = accountValidator.verifyCredentials(authString);
         DTOValidator.validateGameRequest(gameRequest);
         PlayerIndicator requesterColor = DTOValidator.validatePlayerIndicator(gameRequest.getPlayerIndicator());
-        if(!accountDAO.userExists(otherId)) {
-            throw new GameServerException(ErrorCode.USER_NOT_FOUND);
-        }
-        if(!user.isFriend(otherId)) {
-            throw new GameServerException(ErrorCode.ALREADY_FRIENDS);
-        }
+        List<User> others = accountValidator.verifyUserIds(Arrays.asList(gameRequest.getOpponents()));
+        others.forEach(o -> socialValidator.validateFriends(user, o.getId()));
 
         //gameDAO.createGameRequest(user.getId().toString(), other, gameRequest.getSize(), requesterColor, first);
     }

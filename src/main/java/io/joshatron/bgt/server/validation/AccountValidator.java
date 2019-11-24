@@ -11,7 +11,9 @@ import io.joshatron.bgt.server.request.NewUsername;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class AccountValidator {
@@ -35,6 +37,10 @@ public class AccountValidator {
         } catch(GameServerException e) {
             throw new GameServerException(ErrorCode.USER_NOT_FOUND);
         }
+    }
+
+    public List<User> verifyUserIds(List<String> ids) {
+        return ids.stream().map(this::verifyUserId).collect(Collectors.toList());
     }
 
     public void verifyRegistration(NewUser newUser) {
