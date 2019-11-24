@@ -1,11 +1,13 @@
 package io.joshatron.bgt.server.utils;
 
 import io.joshatron.bgt.engine.player.PlayerIndicator;
+import io.joshatron.bgt.server.database.model.GameRequest;
 import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.response.*;
 import io.joshatron.bgt.server.validation.AccountValidator;
 import io.joshatron.bgt.server.validation.DTOValidator;
+import io.joshatron.bgt.server.validation.GameValidator;
 import io.joshatron.bgt.server.validation.SocialValidator;
 import io.joshatron.tak.engine.exception.TakEngineException;
 import io.joshatron.tak.engine.game.GameResult;
@@ -41,46 +43,34 @@ public class GameUtils {
     private AccountValidator accountValidator;
     @Autowired
     private SocialValidator socialValidator;
+    @Autowired
+    private GameValidator gameValidator;
 
     @Value("${game.forfeit-days:0}")
     private Integer daysToForfeit;
 
-    public void requestGame(String authString, GameRequest gameRequest) {
+    public void requestGame(String authString, RequestGame gameRequest) {
         User user = accountValidator.verifyCredentials(authString);
         DTOValidator.validateGameRequest(gameRequest);
-        PlayerIndicator requesterColor = DTOValidator.validatePlayerIndicator(gameRequest.getPlayerIndicator());
         List<User> others = accountValidator.verifyUserIds(Arrays.asList(gameRequest.getOpponents()));
         others.forEach(o -> socialValidator.validateFriends(user, o.getId()));
+        //TODO: validate parameters
 
-        //gameDAO.createGameRequest(user.getId().toString(), other, gameRequest.getSize(), requesterColor, first);
+        gameDAO.createGameRequest(gameRequest);
     }
 
-    public RequestInfo getRequest(Auth auth, String request) {
-        DTOValidator.validateAuth(auth);
-        UUID requestId = DTOValidator.validateId(request);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!gameDAO.gameRequestExists(requestId)) {
-            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
-        }
+    public RequestInfo getRequest(String authString, String requestId) {
+        accountValidator.verifyCredentials(authString);
+        GameRequest request = gameValidator.verifyGameRequest(requestId);
 
-        return gameDAO.getGameRequestInfo(user.getId(), requestId);
+        return new RequestInfo(request);
     }
 
-    public void deleteRequest(Auth auth, String request) {
-        DTOValidator.validateAuth(auth);
-        UUID requestId = DTOValidator.validateId(request);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!gameDAO.gameRequestExists(requestId)) {
-            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
-        }
+    public void deleteRequest(String authString, String requestId) {
+        accountValidator.verifyCredentials(authString);
+        GameRequest request = gameValidator.verifyGameRequest(requestId);
 
-        gameDAO.deleteGameRequest(requestId);
+        gameDAO.deleteGameRequest(request.getId());
     }
 
     public void respondToGame(Auth auth, String id, GameRequestAnswer answer) {

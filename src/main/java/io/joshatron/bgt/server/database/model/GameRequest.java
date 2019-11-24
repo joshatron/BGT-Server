@@ -1,13 +1,17 @@
 package io.joshatron.bgt.server.database.model;
 
-import io.joshatron.bgt.engine.state.GameParameters;
+import io.joshatron.bgt.engine.player.PlayerIndicator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+@Data
+@AllArgsConstructor
 public class GameRequest {
-    private int id;
-    private User requester;
-    //If empty, request for game with random opponents
-    private List<User> recipients;
-    private GameParameters parameters;
+    private UUID id;
+    private UUID requester;
+    private Map<User, PlayerIndicator> players;
+    private Map<String,String> parameters;
 }

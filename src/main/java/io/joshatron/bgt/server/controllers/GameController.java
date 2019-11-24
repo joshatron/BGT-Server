@@ -21,7 +21,7 @@ public class GameController {
     private Logger logger = LoggerFactory.getLogger(GameController.class);
 
     @PostMapping(value = "/request/create", produces = "application/json")
-    public ResponseEntity requestGame(@RequestHeader(value="Authorization") String authString, @RequestBody GameRequest gameRequest) {
+    public ResponseEntity requestGame(@RequestHeader(value="Authorization") String authString, @RequestBody RequestGame gameRequest) {
         try {
             logger.info("Requesting new game");
             gameUtils.requestGame(authString, gameRequest);
@@ -33,10 +33,10 @@ public class GameController {
     }
 
     @GetMapping(value = "/request/{id}", produces = "application/json")
-    public ResponseEntity getGameRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String request) {
+    public ResponseEntity getGameRequest(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String request) {
         try {
             logger.info("Getting game request");
-            RequestInfo gameRequest = gameUtils.getRequest(new Auth(auth), request);
+            RequestInfo gameRequest = gameUtils.getRequest(authString, request);
             logger.info("Successfully grabbed request");
             return new ResponseEntity<>(gameRequest, HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -45,10 +45,10 @@ public class GameController {
     }
 
     @DeleteMapping(value = "/request/{id}/cancel", produces = "application/json")
-    public ResponseEntity cancelGameRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String request) {
+    public ResponseEntity cancelGameRequest(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String request) {
         try {
             logger.info("Deleting game request");
-            gameUtils.deleteRequest(new Auth(auth), request);
+            gameUtils.deleteRequest(authString, request);
             logger.info("Successfully deleted request");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

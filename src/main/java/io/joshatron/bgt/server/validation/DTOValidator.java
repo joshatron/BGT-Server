@@ -2,7 +2,6 @@ package io.joshatron.bgt.server.validation;
 
 import io.joshatron.bgt.engine.player.PlayerIndicator;
 import io.joshatron.bgt.server.request.*;
-import io.joshatron.tak.engine.game.Player;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 
@@ -228,7 +227,7 @@ public class DTOValidator {
         }
     }
 
-    public static void validateGameRequest(GameRequest gameRequest) {
+    public static void validateGameRequest(RequestGame gameRequest) {
         //validateGameBoardSize(gameRequest.getSize());
 
 //        if(!gameRequest.getFirst().equalsIgnoreCase("white") && !gameRequest.getFirst().equalsIgnoreCase("black")) {
