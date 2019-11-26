@@ -36,6 +36,7 @@ public enum ErrorCode {
     WRONG_INITIAL_STATE(HttpStatus.FORBIDDEN),
     ALREADY_IN_STATE(HttpStatus.FORBIDDEN),
     GAME_IS_COMPLETE(HttpStatus.FORBIDDEN),
+    ALREADY_RESPONDED(HttpStatus.FORBIDDEN),
 
     //Bad Auth
     INCORRECT_AUTH(HttpStatus.UNAUTHORIZED),

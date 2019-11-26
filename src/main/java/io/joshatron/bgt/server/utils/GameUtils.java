@@ -75,8 +75,9 @@ public class GameUtils {
 
     public void respondToGame(String authString, String requestId, GameRequestAnswer answer) {
         User user = accountValidator.verifyCredentials(authString);
-        GameRequest request = gameValidator.verifyGameRequest(requestId);
+        GameRequest request = gameValidator.verifyGameRequest(user, requestId);
         DTOValidator.validateGameRequestAnswer(answer);
+        DTOValidator.validateUserNotRespondedYet(user, request);
 
         if(answer.getAnswer() == Answer.ACCEPT) {
             //gameDAO.startGame(id, user.getId().toString(), info.getSize(), info.getRequesterColor(), info.getFirst());
