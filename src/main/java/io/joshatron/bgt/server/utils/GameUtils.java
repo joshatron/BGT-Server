@@ -73,19 +73,12 @@ public class GameUtils {
         gameDAO.deleteGameRequest(request.getId());
     }
 
-    public void respondToGame(Auth auth, String id, GameRequestAnswer answer) {
-        DTOValidator.validateAuth(auth);
-        UUID uuid = DTOValidator.validateId(id);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
-        if(!gameDAO.gameRequestExists(uuid)) {
-            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
-        }
+    public void respondToGame(String authString, String requestId, GameRequestAnswer answer) {
+        User user = accountValidator.verifyCredentials(authString);
+        GameRequest request = gameValidator.verifyGameRequest(requestId);
+        DTOValidator.validateGameRequestAnswer(answer);
 
         if(answer.getAnswer() == Answer.ACCEPT) {
-            RequestInfo info = gameDAO.getGameRequestInfo(uuid, user.getId());
             //gameDAO.startGame(id, user.getId().toString(), info.getSize(), info.getRequesterColor(), info.getFirst());
         }
         //gameDAO.deleteGameRequest(id, user.getId().toString());

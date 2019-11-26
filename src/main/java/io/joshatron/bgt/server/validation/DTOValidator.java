@@ -244,4 +244,10 @@ public class DTOValidator {
             throw new GameServerException(ErrorCode.ILLEGAL_SIZE);
         }
     }
+
+    public static void validateGameRequestAnswer(GameRequestAnswer response) {
+        if(response == null || response.getAnswer() == null || response.getPlayerIndicator() == null) {
+            throw new GameServerException(ErrorCode.EMPTY_FIELD);
+        }
+    }
 }

@@ -57,10 +57,10 @@ public class GameController {
     }
 
     @PostMapping(value = "/request/{id}/respond", produces = "application/json")
-    public ResponseEntity respondToGameRequest(@RequestHeader(value="Authorization") String auth, @PathVariable("id") String request, @RequestBody GameRequestAnswer answer) {
+    public ResponseEntity respondToGameRequest(@RequestHeader(value="Authorization") String authString, @PathVariable("id") String request, @RequestBody GameRequestAnswer answer) {
         try {
             logger.info("Responding to game request");
-            gameUtils.respondToGame(new Auth(auth), request, answer);
+            gameUtils.respondToGame(authString, request, answer);
             logger.info("Successfully responded to game request");
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
