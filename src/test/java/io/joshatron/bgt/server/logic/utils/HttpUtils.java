@@ -431,28 +431,13 @@ public class HttpUtils {
     }
 
     public static Response requestGame(String username, String password, String other, Integer size, String requesterColor, String first, HttpClient client) throws IOException {
-        boolean firstParam = true;
         String payload = "{";
-        if(size != null) {
-            payload += "\"size\": " + size.toString();
-            firstParam = false;
-        }
-        if(requesterColor != null) {
-            if(!firstParam) {
-                payload += ",";
-            }
-            payload += "\"requesterColor\": \"" + requesterColor + "\"";
-            firstParam = false;
-        }
-        if(first != null) {
-            if(!firstParam) {
-                payload += ",";
-            }
-            payload += "\"first\": \"" + first + "\"";
-        }
+        payload += "\"opponents\": [\"" + other + "\"],";
+        payload += "\"playerIndicator\": \"" + requesterColor + "\",";
+        payload += "\"parameters\": {\"key\": \"value\"}";
         payload += "}";
 
-        HttpPost request = new HttpPost(baseUrl + "/games/request/create/" + other);
+        HttpPost request = new HttpPost(baseUrl + "/games/request/create");
         if(username != null && password != null) {
             request.setHeader("Authorization", getBasicAuthString(username, password));
         }

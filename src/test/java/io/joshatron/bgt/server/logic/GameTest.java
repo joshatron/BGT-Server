@@ -39,7 +39,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
     }
@@ -89,7 +89,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_FORBIDDEN);
@@ -110,7 +110,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
@@ -134,7 +134,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         user1.setPassword("drowssap");
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_UNAUTHORIZED);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
@@ -147,7 +147,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.deleteGameRequest(user1, user2, client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
@@ -160,7 +160,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.deleteGameRequest(user1, user3, client, HttpStatus.SC_NOT_FOUND);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
@@ -172,7 +172,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.deleteGameRequest(user1, user2, client, HttpStatus.SC_NOT_FOUND);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
     }
@@ -184,7 +184,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.deleteGameRequest(user3, user2, client, HttpStatus.SC_UNAUTHORIZED);
     }
 
@@ -194,7 +194,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         user1.setPassword("drowssap");
         GameUtils.deleteGameRequest(user1, user2, client, HttpStatus.SC_UNAUTHORIZED);
@@ -208,7 +208,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
@@ -221,7 +221,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "DENY", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
@@ -234,7 +234,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "INVALID", client, HttpStatus.SC_BAD_REQUEST);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
@@ -247,7 +247,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NOT_FOUND);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
         GameUtils.searchAllGames(user2, client, HttpStatus.SC_OK, 0);
@@ -260,7 +260,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_UNAUTHORIZED);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
@@ -273,7 +273,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         user2.setPassword("drowssap");
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_UNAUTHORIZED);
@@ -296,7 +296,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
     }
@@ -308,9 +308,9 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user3, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user3, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user3, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user3, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1, user3}, null);
@@ -322,7 +322,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user1, client, HttpStatus.SC_OK, null, new User[]{user2});
     }
@@ -334,7 +334,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkIncoming(user3, client, HttpStatus.SC_UNAUTHORIZED, null, new User[]{user2, user1});
     }
@@ -345,7 +345,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         user2.setPassword("drowssap");
         GameUtils.checkIncoming(user2, client, HttpStatus.SC_UNAUTHORIZED, null, new User[]{user1});
@@ -365,7 +365,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkOutgoing(user1, client, HttpStatus.SC_OK, new User[]{user2}, null);
     }
@@ -377,9 +377,9 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkOutgoing(user1, client, HttpStatus.SC_OK, new User[]{user2, user3}, null);
@@ -391,7 +391,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkOutgoing(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
     }
@@ -403,7 +403,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkOutgoing(user3, client, HttpStatus.SC_UNAUTHORIZED, null, new User[]{user2, user1});
     }
@@ -414,7 +414,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         user1.setPassword("drowssap");
         GameUtils.checkOutgoing(user1, client, HttpStatus.SC_UNAUTHORIZED, null, new User[]{user2});
@@ -462,7 +462,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestRandomGame(user1, 5, client, HttpStatus.SC_NO_CONTENT);
@@ -479,7 +479,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestRandomGame(user1, 5, client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestRandomGame(user2, 5, client, HttpStatus.SC_NO_CONTENT);
         GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1);
@@ -664,7 +664,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1);
@@ -677,9 +677,9 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -694,9 +694,9 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         playSimpleGame(user1, user2, "BLACK", "BLACK");
         Date start = new Date();
         Thread.sleep(2000);
@@ -717,9 +717,9 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -734,7 +734,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.searchGames(user1, user3.getUserId(), null, null, null, null, null, null, null, client, HttpStatus.SC_NOT_FOUND, 0);
@@ -747,7 +747,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.searchGames(user1, user3.getUserId() + "," + user2.getUserId(), null, null, null, null, null, null, null, client, HttpStatus.SC_NOT_FOUND, 1);
@@ -769,11 +769,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         Date start = new Date();
@@ -791,7 +791,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         Date start = new Date();
@@ -815,11 +815,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         Date end = new Date();
@@ -837,7 +837,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         Date end = new Date();
         Thread.sleep(2000);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -863,13 +863,13 @@ public class GameTest extends BaseTest {
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         User user5 = AccountUtils.addUser(test, "05", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user5, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user5, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user5, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         Date start = new Date();
@@ -903,11 +903,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         playSimpleGame(user1, user3, "WHITE", "WHITE");
@@ -923,11 +923,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         playSimpleGame(user1, user3, "WHITE", "WHITE");
@@ -950,11 +950,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -972,11 +972,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -1001,11 +1001,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         playSimpleGame(user1, user2, "WHITE", "WHITE");
         playSimpleGame(user1, user3, "WHITE", "WHITE");
         playSimpleGame(user4, user1, "WHITE", "WHITE");
@@ -1020,11 +1020,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         playSimpleGame(user1, user2, "WHITE", "WHITE");
         playSimpleGame(user1, user3, "WHITE", "WHITE");
         playSimpleGame(user4, user1, "WHITE", "WHITE");
@@ -1046,11 +1046,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -1068,11 +1068,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -1097,11 +1097,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -1119,11 +1119,11 @@ public class GameTest extends BaseTest {
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         User user4 = AccountUtils.addUser(test, "04", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user4, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user4, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user4, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user3, 4, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
@@ -1170,7 +1170,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1186,7 +1186,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1199,7 +1199,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.getGame(user1, ZERO_ID, client, HttpStatus.SC_NOT_FOUND, null, null, null);
@@ -1212,7 +1212,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1227,7 +1227,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1243,7 +1243,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1273,7 +1273,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1293,7 +1293,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = playSimpleGame(user1, user2, "WHITE", "WHITE");
         GameUtils.sendGameMessage(user1, gameId, "Message 1", client, HttpStatus.SC_FORBIDDEN);
         JSONObject json = GameUtils.getGame(user1, gameId, true, client, HttpStatus.SC_OK, user1, user2, null);
@@ -1307,7 +1307,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1323,7 +1323,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1336,7 +1336,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1349,7 +1349,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = playSimpleGame(user1, user2, "WHITE", "WHITE");
         GameUtils.getPossibleMoves(user1, gameId, client, HttpStatus.SC_OK, 0);
         GameUtils.getPossibleMoves(user2, gameId, client, HttpStatus.SC_OK, 0);
@@ -1362,7 +1362,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1383,7 +1383,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1396,7 +1396,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchAllGames(user1, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1411,7 +1411,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchGames(user1, user2.getUserId(), null, null, "INCOMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1426,7 +1426,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchGames(user1, user2.getUserId(), null, null, "INCOMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1442,7 +1442,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchGames(user1, user2.getUserId(), null, null, "INCOMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1464,7 +1464,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchGames(user1, user2.getUserId(), null, null, "INCOMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1480,7 +1480,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchGames(user1, user2.getUserId(), null, null, "INCOMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1496,7 +1496,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         playSimpleGame(user1, user2, "WHITE", "WHITE");
         GameUtils.searchGames(user1, null, null, null, "COMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1);
     }
@@ -1508,7 +1508,7 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = new User(test + "03", "password");
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchGames(user1, user2.getUserId(), null, null, "INCOMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1523,7 +1523,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         String gameId = GameUtils.searchGames(user1, user2.getUserId(), null, null, "INCOMPLETE", null, null, null, null, client, HttpStatus.SC_OK, 1).getJSONObject(0).getString("gameId");
@@ -1540,7 +1540,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         Assert.assertEquals(AccountUtils.seachUsers(user1.getUsername(), null, client, HttpStatus.SC_OK).getRating(), 1000);
         Assert.assertEquals(AccountUtils.seachUsers(user2.getUsername(), null, client, HttpStatus.SC_OK).getRating(), 1000);
         playSimpleGame(user1, user2, "WHITE", "WHITE");
@@ -1611,7 +1611,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkGameNotifications(user1, client, HttpStatus.SC_OK, 0, 0);
     }
 
@@ -1621,7 +1621,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkGameNotifications(user2, client, HttpStatus.SC_OK, 1, 0);
     }
@@ -1632,7 +1632,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkGameNotifications(user2, client, HttpStatus.SC_OK, 0, 0);
     }
 
@@ -1642,7 +1642,7 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.checkGameNotifications(user2, client, HttpStatus.SC_OK, 0, 0);
@@ -1655,9 +1655,9 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         User user3 = AccountUtils.addUser(test, "03", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user2, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user3, client, HttpStatus.SC_NO_CONTENT);
-        SocialUtils.respondToRequest(user3, user1, "accept", client, HttpStatus.SC_NO_CONTENT);
+        SocialUtils.respondToRequest(user3, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.respondToGameRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user3, user1, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);

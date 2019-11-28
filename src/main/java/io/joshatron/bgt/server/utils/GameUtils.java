@@ -1,14 +1,10 @@
 package io.joshatron.bgt.server.utils;
 
-import io.joshatron.bgt.engine.player.PlayerIndicator;
 import io.joshatron.bgt.server.database.model.GameRequest;
 import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.response.*;
-import io.joshatron.bgt.server.validation.AccountValidator;
-import io.joshatron.bgt.server.validation.DTOValidator;
-import io.joshatron.bgt.server.validation.GameValidator;
-import io.joshatron.bgt.server.validation.SocialValidator;
+import io.joshatron.bgt.server.validation.*;
 import io.joshatron.tak.engine.exception.TakEngineException;
 import io.joshatron.tak.engine.game.GameResult;
 import io.joshatron.tak.engine.game.GameState;
@@ -45,6 +41,8 @@ public class GameUtils {
     private SocialValidator socialValidator;
     @Autowired
     private GameValidator gameValidator;
+    @Autowired
+    private CustomBGTValidator bgtValidator;
 
     @Value("${game.forfeit-days:0}")
     private Integer daysToForfeit;
@@ -52,23 +50,23 @@ public class GameUtils {
     public void requestGame(String authString, RequestGame gameRequest) {
         User user = accountValidator.verifyCredentials(authString);
         DTOValidator.validateGameRequest(gameRequest);
+        bgtValidator.validateGameRequest(gameRequest);
         List<User> others = accountValidator.verifyUserIds(Arrays.asList(gameRequest.getOpponents()));
         others.forEach(o -> socialValidator.validateFriends(user, o.getId()));
-        //TODO: validate parameters
 
         gameDAO.createGameRequest(gameRequest);
     }
 
     public RequestInfo getRequest(String authString, String requestId) {
-        accountValidator.verifyCredentials(authString);
-        GameRequest request = gameValidator.verifyGameRequest(requestId);
+        User user = accountValidator.verifyCredentials(authString);
+        GameRequest request = gameValidator.verifyGameRequest(user, requestId);
 
         return new RequestInfo(request);
     }
 
     public void deleteRequest(String authString, String requestId) {
-        accountValidator.verifyCredentials(authString);
-        GameRequest request = gameValidator.verifyGameRequest(requestId);
+        User user = accountValidator.verifyCredentials(authString);
+        GameRequest request = gameValidator.verifyGameRequest(user, requestId);
 
         gameDAO.deleteGameRequest(request.getId());
     }
