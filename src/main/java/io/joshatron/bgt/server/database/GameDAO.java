@@ -1,7 +1,9 @@
 package io.joshatron.bgt.server.database;
 
+import io.joshatron.bgt.engine.player.PlayerIndicator;
 import io.joshatron.bgt.engine.state.GameState;
 import io.joshatron.bgt.server.database.model.GameRequest;
+import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Complete;
@@ -10,7 +12,6 @@ import io.joshatron.bgt.server.request.RequestGame;
 import io.joshatron.bgt.server.response.GameInfo;
 import io.joshatron.bgt.server.response.GameNotifications;
 import io.joshatron.bgt.server.response.RandomRequestInfo;
-import io.joshatron.bgt.server.response.RequestInfo;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,9 +20,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Component
@@ -29,15 +28,20 @@ public class GameDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void createGameRequest(RequestGame gameRequest) {
+    public void createGameRequest(User requester, List<User> opponents, RequestGame gameRequest) {
         try {
             Session session = sessionFactory.getCurrentSession();
             Transaction transaction = session.beginTransaction();
 
             GameRequest request = new GameRequest();
+            request.setRequester(requester);
+            request.setParameters(gameRequest.getParameters());
+            Map<User, PlayerIndicator> playerMap = new HashMap<>();
+            playerMap.put(requester, PlayerIndicator.valueOf(gameRequest.getPlayerIndicator()));
+            opponents.forEach(o -> playerMap.put(o, PlayerIndicator.NONE));
+            request.setPlayers(playerMap);
 
             session.save(request);
-            Logger.getAnonymousLogger().info(request.getId().toString());
             transaction.commit();
         }
         catch(HibernateException e) {
@@ -48,7 +52,7 @@ public class GameDAO {
     public GameRequest getGameRequestInfo(UUID request) {
         try {
             Session session = sessionFactory.getCurrentSession();
-            Query<GameRequest> query = session.createQuery("from User u where u.id=:id", GameRequest.class);
+            Query<GameRequest> query = session.createQuery("from GameRequest r where r.id=:id", GameRequest.class);
             query.setParameter("id", request);
             List<GameRequest> requests = query.list();
             if(requests.size() > 1) {
@@ -58,6 +62,22 @@ public class GameDAO {
                 throw new GameServerException(ErrorCode.USER_NOT_FOUND);
             }
             return requests.get(0);
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
+    }
+
+    public List<GameRequest> getIncomingGameRequests(UUID user) {
+        return null;
+    }
+
+    public List<GameRequest> getOutgoingGameRequests(User user) {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Query<GameRequest> query = session.createQuery("from GameRequest r where r.requester=:requester", GameRequest.class);
+            query.setParameter("requester", user);
+            return query.list();
         }
         catch(HibernateException e) {
             throw new GameServerException(ErrorCode.DATABASE_ERROR);
@@ -109,14 +129,6 @@ public class GameDAO {
 
     public boolean isYourTurn(String user, String gameId) {
         return false;
-    }
-
-    public RequestInfo[] getIncomingGameRequests(String user) {
-        return null;
-    }
-
-    public RequestInfo[] getOutgoingGameRequests(String user) {
-        return null;
     }
 
     public int getOutgoingRandomRequestSize(String user) {

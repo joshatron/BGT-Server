@@ -54,7 +54,7 @@ public class GameUtils {
         List<User> others = accountValidator.verifyUserIds(Arrays.asList(gameRequest.getOpponents()));
         others.forEach(o -> socialValidator.validateFriends(user, o.getId()));
 
-        gameDAO.createGameRequest(gameRequest);
+        gameDAO.createGameRequest(user, others, gameRequest);
     }
 
     public RequestInfo getRequest(String authString, String requestId) {
@@ -83,24 +83,24 @@ public class GameUtils {
         //gameDAO.deleteGameRequest(id, user.getId().toString());
     }
 
-    public RequestInfo[] checkIncomingRequests(Auth auth) {
-        DTOValidator.validateAuth(auth);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+    public RequestInfo[] checkIncomingRequests(String authString) {
+        User user = accountValidator.verifyCredentials(authString);
 
-        return gameDAO.getIncomingGameRequests(user.getId().toString());
+        List<GameRequest> requests = gameDAO.getIncomingGameRequests(user.getId());
+
+        return requests.stream()
+                .map(RequestInfo::new)
+                .toArray(RequestInfo[]::new);
     }
 
-    public RequestInfo[] checkOutgoingRequests(Auth auth) {
-        DTOValidator.validateAuth(auth);
-        if(!accountDAO.isAuthenticated(auth)) {
-            throw new GameServerException(ErrorCode.INCORRECT_AUTH);
-        }
-        User user = accountDAO.getUserFromUsername(auth.getUsername());
+    public RequestInfo[] checkOutgoingRequests(String authString) {
+        User user = accountValidator.verifyCredentials(authString);
 
-        return gameDAO.getOutgoingGameRequests(user.getId().toString());
+        List<GameRequest> requests = gameDAO.getOutgoingGameRequests(user);
+
+        return requests.stream()
+                .map(RequestInfo::new)
+                .toArray(RequestInfo[]::new);
     }
 
     public void requestRandomGame(Auth auth, RandomGameRequest request) {

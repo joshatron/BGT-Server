@@ -40,7 +40,9 @@ public class AccountValidator {
     }
 
     public List<User> verifyUserIds(List<String> ids) {
-        return ids.stream().map(this::verifyUserId).collect(Collectors.toList());
+        return ids.stream()
+                .map(this::verifyUserId)
+                .collect(Collectors.toList());
     }
 
     public void verifyRegistration(NewUser newUser) {

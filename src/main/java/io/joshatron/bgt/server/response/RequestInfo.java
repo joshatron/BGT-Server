@@ -22,7 +22,9 @@ public class RequestInfo {
 
     public RequestInfo(GameRequest request) {
         this.id = request.getId();
-        this.requester = request.getRequester().getId();
+        if(request.getRequester() != null) {
+            this.requester = request.getRequester().getId();
+        }
         this.players = new ArrayList<>();
         for(Map.Entry<User, PlayerIndicator> userAndColor : request.getPlayers().entrySet()) {
             this.players.add(new PlayerAndIndicator(userAndColor.getKey().getId(), userAndColor.getValue()));

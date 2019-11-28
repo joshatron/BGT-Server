@@ -41,7 +41,8 @@ public class GameTest extends BaseTest {
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.respondToRequest(user2, user1, "ACCEPT", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_NO_CONTENT);
-        GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
+        GameUtils.checkOutgoing(user1, client, HttpStatus.SC_OK, new User[]{user2}, null);
+        //GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, new User[]{user1}, null);
     }
 
     @Test(groups = {"parallel"})

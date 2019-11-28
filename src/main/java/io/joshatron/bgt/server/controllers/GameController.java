@@ -69,10 +69,10 @@ public class GameController {
     }
 
     @GetMapping(value = "/request/incoming", produces = "application/json")
-    public ResponseEntity checkIncomingGames(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity checkIncomingGames(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Requesting incoming games");
-            RequestInfo[] games = gameUtils.checkIncomingRequests(new Auth(auth));
+            RequestInfo[] games = gameUtils.checkIncomingRequests(authString);
             logger.info("Incoming games found");
             return new ResponseEntity<>(games, HttpStatus.OK);
         } catch (Exception e) {
@@ -81,10 +81,10 @@ public class GameController {
     }
 
     @GetMapping(value = "/request/outgoing", produces = "application/json")
-    public ResponseEntity checkOutgoingGames(@RequestHeader(value="Authorization") String auth) {
+    public ResponseEntity checkOutgoingGames(@RequestHeader(value="Authorization") String authString) {
         try {
             logger.info("Requesting outgoing games");
-            RequestInfo[] games = gameUtils.checkOutgoingRequests(new Auth(auth));
+            RequestInfo[] games = gameUtils.checkOutgoingRequests(authString);
             logger.info("Outgoing games found");
             return new ResponseEntity<>(games, HttpStatus.OK);
         } catch (Exception e) {
