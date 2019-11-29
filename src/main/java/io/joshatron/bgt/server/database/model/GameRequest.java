@@ -1,13 +1,10 @@
 package io.joshatron.bgt.server.database.model;
 
-import io.joshatron.bgt.engine.player.PlayerIndicator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Data
@@ -19,22 +16,22 @@ public class GameRequest {
     @ManyToOne
     private User requester;
     @ElementCollection
-    @CollectionTable(name = "player_indicator_map",
-            joinColumns = {@JoinColumn(name = "request_id", referencedColumnName = "id")})
+    @CollectionTable(name = "PlayerAndIndicator",
+            joinColumns = {@JoinColumn(name = "requestId", referencedColumnName = "id")})
     @MapKeyColumn(name = "opponent")
     @Column
-    private Map<User, PlayerIndicator> players;
+    private List<PlayerAndIndicator> players;
     @ElementCollection
-    @CollectionTable(name = "game_parameters",
-            joinColumns = {@JoinColumn(name = "request_id", referencedColumnName = "id")})
-    @MapKeyColumn(name = "param_name")
+    @CollectionTable(name = "GameParameters",
+            joinColumns = {@JoinColumn(name = "requestId", referencedColumnName = "id")})
+    @MapKeyColumn(name = "paramName")
     @Column
     private Map<String,String> parameters;
 
     public GameRequest() {
         id = null;
         requester = null;
-        players = new HashMap<>();
+        players = new ArrayList<>();
         parameters = new HashMap<>();
     }
 }

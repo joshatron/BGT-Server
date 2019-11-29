@@ -5,6 +5,7 @@ import io.joshatron.bgt.server.database.model.GameRequest;
 import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
+import io.joshatron.bgt.server.database.model.PlayerAndIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +21,12 @@ public class GameValidator {
         UUID id = UUID.fromString(request);
         try {
             GameRequest gameRequest = gameDAO.getGameRequestInfo(id);
-            if(!gameRequest.getPlayers().containsKey(user)) {
-                throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
+            for(PlayerAndIndicator player : gameRequest.getPlayers()) {
+                if(player.getPlayer().equals(user.getId())) {
+                    return gameRequest;
+                }
             }
-            return gameRequest;
+            throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         } catch(GameServerException e) {
             throw new GameServerException(ErrorCode.REQUEST_NOT_FOUND);
         }

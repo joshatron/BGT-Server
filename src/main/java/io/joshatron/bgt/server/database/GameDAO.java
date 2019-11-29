@@ -8,6 +8,7 @@ import io.joshatron.bgt.server.exceptions.ErrorCode;
 import io.joshatron.bgt.server.exceptions.GameServerException;
 import io.joshatron.bgt.server.request.Complete;
 import io.joshatron.bgt.server.request.Pending;
+import io.joshatron.bgt.server.database.model.PlayerAndIndicator;
 import io.joshatron.bgt.server.request.RequestGame;
 import io.joshatron.bgt.server.response.GameInfo;
 import io.joshatron.bgt.server.response.GameNotifications;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 @Component
 public class GameDAO {
@@ -36,10 +36,10 @@ public class GameDAO {
             GameRequest request = new GameRequest();
             request.setRequester(requester);
             request.setParameters(gameRequest.getParameters());
-            Map<User, PlayerIndicator> playerMap = new HashMap<>();
-            playerMap.put(requester, PlayerIndicator.valueOf(gameRequest.getPlayerIndicator()));
-            opponents.forEach(o -> playerMap.put(o, PlayerIndicator.NONE));
-            request.setPlayers(playerMap);
+            List<PlayerAndIndicator> playerList = new ArrayList<>();
+            playerList.add(new PlayerAndIndicator(requester.getId(), PlayerIndicator.valueOf(gameRequest.getPlayerIndicator())));
+            opponents.forEach(o -> playerList.add(new PlayerAndIndicator(o.getId(), PlayerIndicator.NONE)));
+            request.setPlayers(playerList);
 
             session.save(request);
             transaction.commit();
@@ -69,7 +69,15 @@ public class GameDAO {
     }
 
     public List<GameRequest> getIncomingGameRequests(UUID user) {
-        return null;
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Query<GameRequest> query = session.createQuery("from GameRequest r where r.requester=:requester", GameRequest.class);
+            query.setParameter("requester", user);
+            return query.list();
+        }
+        catch(HibernateException e) {
+            throw new GameServerException(ErrorCode.DATABASE_ERROR);
+        }
     }
 
     public List<GameRequest> getOutgoingGameRequests(User user) {

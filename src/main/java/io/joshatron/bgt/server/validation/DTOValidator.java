@@ -2,6 +2,7 @@ package io.joshatron.bgt.server.validation;
 
 import io.joshatron.bgt.engine.player.PlayerIndicator;
 import io.joshatron.bgt.server.database.model.GameRequest;
+import io.joshatron.bgt.server.database.model.PlayerAndIndicator;
 import io.joshatron.bgt.server.database.model.User;
 import io.joshatron.bgt.server.request.*;
 import io.joshatron.bgt.server.exceptions.ErrorCode;
@@ -254,8 +255,13 @@ public class DTOValidator {
     }
 
     public static void validateUserNotRespondedYet(User user, GameRequest request) {
-        if(request.getPlayers().get(user) != PlayerIndicator.NONE) {
-            throw new GameServerException(ErrorCode.ALREADY_RESPONDED);
+        for(PlayerAndIndicator player : request.getPlayers()) {
+            if(user.getId().equals(player.getPlayer())) {
+                if(player.getColor() != PlayerIndicator.NONE) {
+                    throw new GameServerException(ErrorCode.ALREADY_RESPONDED);
+                }
+                return;
+            }
         }
     }
 }
