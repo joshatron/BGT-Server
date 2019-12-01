@@ -1,19 +1,29 @@
 package io.joshatron.bgt.server.database.model;
 
 import io.joshatron.bgt.engine.player.PlayerIndicator;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class PlayerAndIndicator {
-    @Column
+    @Id
+    @GeneratedValue(generator = "UUID")
+    private UUID id;
+    @ManyToOne
+    private GameRequest gameRequest;
+    @Column(nullable = false)
     private UUID player;
-    @Column
-    private PlayerIndicator color;
+    @Column(nullable = false)
+    private PlayerIndicator indicator;
+
+    public PlayerAndIndicator(GameRequest request, UUID player, PlayerIndicator indicator) {
+        this.gameRequest = request;
+        this.player = player;
+        this.indicator = indicator;
+    }
 }

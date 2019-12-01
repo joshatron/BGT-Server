@@ -15,11 +15,7 @@ public class GameRequest {
     private UUID id;
     @ManyToOne
     private User requester;
-    @ElementCollection
-    @CollectionTable(name = "PlayerAndIndicator",
-            joinColumns = {@JoinColumn(name = "requestId", referencedColumnName = "id")})
-    @MapKeyColumn(name = "opponent")
-    @Column
+    @OneToMany(mappedBy = "gameRequest", cascade = CascadeType.ALL)
     private List<PlayerAndIndicator> players;
     @ElementCollection
     @CollectionTable(name = "GameParameters",

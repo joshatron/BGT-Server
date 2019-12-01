@@ -257,7 +257,7 @@ public class DTOValidator {
     public static void validateUserNotRespondedYet(User user, GameRequest request) {
         for(PlayerAndIndicator player : request.getPlayers()) {
             if(user.getId().equals(player.getPlayer())) {
-                if(player.getColor() != PlayerIndicator.NONE) {
+                if(player.getIndicator() != PlayerIndicator.NONE) {
                     throw new GameServerException(ErrorCode.ALREADY_RESPONDED);
                 }
                 return;

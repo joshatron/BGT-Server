@@ -37,8 +37,8 @@ public class GameDAO {
             request.setRequester(requester);
             request.setParameters(gameRequest.getParameters());
             List<PlayerAndIndicator> playerList = new ArrayList<>();
-            playerList.add(new PlayerAndIndicator(requester.getId(), PlayerIndicator.valueOf(gameRequest.getPlayerIndicator())));
-            opponents.forEach(o -> playerList.add(new PlayerAndIndicator(o.getId(), PlayerIndicator.NONE)));
+            playerList.add(new PlayerAndIndicator(request, requester.getId(), PlayerIndicator.valueOf(gameRequest.getPlayerIndicator())));
+            opponents.forEach(o -> playerList.add(new PlayerAndIndicator(request, o.getId(), PlayerIndicator.NONE)));
             request.setPlayers(playerList);
 
             session.save(request);
