@@ -81,7 +81,7 @@ public class SocialValidator {
 
     public void validateFriends(User requester, UUID other) {
         if(!requester.isFriend(other)) {
-            throw new GameServerException(ErrorCode.FRIEND_NOT_FOUND);
+            throw new GameServerException(ErrorCode.NOT_FRIENDS);
         }
     }
 }

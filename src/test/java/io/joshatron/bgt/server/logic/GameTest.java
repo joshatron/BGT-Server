@@ -51,7 +51,8 @@ public class GameTest extends BaseTest {
         User user1 = AccountUtils.addUser(test, "01", "password", client, HttpStatus.SC_NO_CONTENT);
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_FORBIDDEN);
-        GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
+        //GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
+        GameUtils.checkOutgoing(user1, client, HttpStatus.SC_OK, null, new User[]{user2});
     }
 
     @Test(groups = {"parallel"})
@@ -61,7 +62,8 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.requestFriend(user1, user2, client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_FORBIDDEN);
-        GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
+        //GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
+        GameUtils.checkOutgoing(user1, client, HttpStatus.SC_OK, null, new User[]{user2});
     }
 
     @Test(groups = {"parallel"})
@@ -71,7 +73,8 @@ public class GameTest extends BaseTest {
         User user2 = AccountUtils.addUser(test, "02", "password", client, HttpStatus.SC_NO_CONTENT);
         SocialUtils.blockUser(user2, user1, client, HttpStatus.SC_NO_CONTENT);
         GameUtils.requestGame(user1, user2, 5, "WHITE", "WHITE", client, HttpStatus.SC_FORBIDDEN);
-        GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
+        //GameUtils.checkIncoming(user2, client, HttpStatus.SC_OK, null, new User[]{user1});
+        GameUtils.checkOutgoing(user1, client, HttpStatus.SC_OK, null, new User[]{user2});
     }
 
     @Test(groups = {"parallel"})

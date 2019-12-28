@@ -21,6 +21,7 @@ public enum ErrorCode {
     SAME_PASSWORD(HttpStatus.FORBIDDEN),
     BLOCKED(HttpStatus.FORBIDDEN),
     BLOCKING(HttpStatus.FORBIDDEN),
+    NOT_FRIENDS(HttpStatus.FORBIDDEN),
     ALREADY_FRIENDS(HttpStatus.FORBIDDEN),
     ALREADY_REQUESTING(HttpStatus.FORBIDDEN),
     ALREADY_BEING_REQUESTED(HttpStatus.FORBIDDEN),
@@ -43,7 +44,6 @@ public enum ErrorCode {
 
     //Not Found
     USER_NOT_FOUND(HttpStatus.NOT_FOUND),
-    FRIEND_NOT_FOUND(HttpStatus.NOT_FOUND),
     REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND),
     GAME_NOT_FOUND(HttpStatus.NOT_FOUND),
     NOT_BLOCKING(HttpStatus.NOT_FOUND),
